@@ -49,9 +49,33 @@ public class GuestService implements GuestInterface {
 	private EntityManager em;
 
     @Override
-    public List<Guest> getGuests() {
-        return repository.findAll();
+    public List<GuestDto> getGuests() {
+       List<Guest> getGuest = repository.findAll();
+       List<GuestDto> gdto = new ArrayList<>();
+       
+       getGuest.forEach(s-> {
+    	   GuestDto d = new GuestDto();
+    	   d.setAadharNumber(s.getAadharNumber());
+    	   d.setBedId(s.getBedId());
+    	   d.setBuildingId(s.getBuildingId());
+    	   d.setGuestName(s.getFirstName().concat(" ").concat(s.getLastName()));
+    	   d.setAmountPaid(s.getAmountPaid());
+    	   d.setBuildingId(s.getBuildingId());
+    	   String name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+ s.getBuildingId(), String.class);
+           d.setBuildingName(name);
+           d.setPersonalNumber(s.getPersonalNumber());
+           d.setCheckInDate(s.getCheckInDate());
+           d.setCheckOutDate(s.getCheckOutDate());
+           d.setAddressLine1(s.getAddressLine1());
+           d.setAddressLine2(s.getAddressLine2());
+           d.setId(s.getId());
+           d.setDefaultRent(s.getDefaultRent());
+           gdto.add(d);
+           
+       });
+       return gdto ;
     }
+    
 
     @Override
     public Guest getGuestById(String guestId) {

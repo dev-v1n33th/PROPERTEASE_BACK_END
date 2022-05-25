@@ -2,6 +2,11 @@ package com.arshaa.dtos;
 
 import java.sql.Date;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 
@@ -9,18 +14,38 @@ public class GuestDto {
 	
 	
 	private String id;
-    private String firstName;
-    private String lastName;
+    private String guestName ;
     private String email;
     @JsonFormat(pattern = "dd-mm-yyyy")
     private Date dateOfBirth;
     private String personalNumber;
-    private String guestStatus;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss", timezone="IST")
+	@Temporal(TemporalType.TIMESTAMP)
+    private java.util.Date checkInDate = new java.util.Date(System.currentTimeMillis());
+    
+    @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss", timezone="IST")
+    private java.util.Date checkOutDate;
+    
+    public java.util.Date getCheckInDate() {
+		return checkInDate;
+	}
+	public void setCheckInDate(java.util.Date checkInDate) {
+		this.checkInDate = checkInDate;
+	}
+	public java.util.Date getCheckOutDate() {
+		return checkOutDate;
+	}
+	public void setCheckOutDate(java.util.Date checkOutDate) {
+		this.checkOutDate = checkOutDate;
+	}
+	private String guestStatus;
     private double defaultRent;
     private double amountPaid;
     private String occupancyType;
     private String gender;
     private String aadharNumber;
+    private String buildingName ;
     private int buildingId;
     private String bedId;
     private int duration;
@@ -36,18 +61,20 @@ public class GuestDto {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getFirstName() {
-		return firstName;
+	
+	public String getBuildingName() {
+		return buildingName;
 	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setBuildingName(String buildingName) {
+		this.buildingName = buildingName;
 	}
-	public String getLastName() {
-		return lastName;
-	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+public String getGuestName () {
+	return guestName ;
+}
+public void setGuestName(String guestName) {
+	this.guestName= guestName ;
+}
+	
 	public String getEmail() {
 		return email;
 	}
@@ -156,15 +183,15 @@ public class GuestDto {
 	public void setState(String state) {
 		this.state = state;
 	}
-	public GuestDto(String id, String firstName, String lastName, String email, Date dateOfBirth, String personalNumber,
+	public GuestDto(String id,  String email, Date dateOfBirth, String personalNumber,
 			String guestStatus, double defaultRent, double amountPaid, String occupancyType, String gender,
 			String aadharNumber, int buildingId, String bedId, int duration, double dueAmount, String addressLine1,
-			String addressLine2, String pincode, String city, String state) {
+			String addressLine2,String buildingName ,String guestName , String pincode, String city, String state) {
 		super();
 		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
+		this.guestName=guestName ;
 		this.email = email;
+		this.buildingName=buildingName ;
 		this.dateOfBirth = dateOfBirth;
 		this.personalNumber = personalNumber;
 		this.guestStatus = guestStatus;
@@ -182,6 +209,10 @@ public class GuestDto {
 		this.pincode = pincode;
 		this.city = city;
 		this.state = state;
+	}
+	public GuestDto() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
     
     
