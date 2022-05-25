@@ -32,7 +32,7 @@ public class GuestController {
     private GuestInterface service;
 
     @GetMapping("/getAllGuests")
-    public List<Guest> getAllGuests() {
+    public List<GuestDto> getAllGuests() {
         return service.getGuests();
     }
 
