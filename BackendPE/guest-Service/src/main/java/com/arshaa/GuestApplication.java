@@ -3,6 +3,8 @@ package com.arshaa;
 import com.arshaa.common.Bed;
 import com.arshaa.entity.Guest;
 import com.arshaa.repository.GuestRepository;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,6 +41,13 @@ public class GuestApplication extends SpringBootServletInitializer {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+    
+    @Bean
+	public ModelMapper  modelMapper()
+	{
+		return new ModelMapper();
+	}
+	
     
 
     @Autowired

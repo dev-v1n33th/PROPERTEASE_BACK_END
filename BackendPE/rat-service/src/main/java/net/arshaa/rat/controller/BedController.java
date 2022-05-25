@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import Models.AvailableBeds;
 import Models.BedSummary;
 import Models.BedsCount;
 import Models.BedsInfo;
@@ -490,17 +491,17 @@ Rooms room = roomRepo.save(newRoom);
 		return new ResponseEntity(bs, HttpStatus.OK);
 	}
 
-	@GetMapping("/getAvailableBeds")
-	public ResponseEntity<List<Bed>> getAllAvailableBeds() {
-		try {
-			List<Bed> bedList = bedrepo.findByBedStatus(true);
-			// Bed bed=new Bed();
-
-			return new ResponseEntity<>(bedList, HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity("Something went wrong", HttpStatus.OK);
-		}
-	}
+//	@GetMapping("/getAvailableBeds")
+//	public ResponseEntity<List<Bed>> getAllAvailableBeds() {
+//		try {
+//			List<Bed> bedList = bedrepo.findByBedStatus(true);
+//			// Bed bed=new Bed();
+//
+//			return new ResponseEntity<>(bedList, HttpStatus.OK);
+//		} catch (Exception e) {
+//			return new ResponseEntity("Something went wrong", HttpStatus.OK);
+//		}
+//	}
 
 // GET ALL BUILDINGS
 
@@ -977,6 +978,56 @@ Rooms room = roomRepo.save(newRoom);
 			return new ResponseEntity(buildingName.getBuildingName(),HttpStatus.OK);
 
 	}
+	
+	@GetMapping("getRoomName/{roomId}")
+	public ResponseEntity getRoomNameByRoomId(@PathVariable int roomId) {
+		Rooms room = roomRepo.getRoomNameByRoomId(roomId);
+		return new ResponseEntity(room.getRoomNumber(), HttpStatus.OK);
+	}
+	
+	@GetMapping("/getFloorName/{floorId}")
+	public ResponseEntity getFloorName(@PathVariable int floorId) {
+		Floors flr = floorRepo.getFloorNumberByFloorId(floorId);
+		return new ResponseEntity(flr.getFloorNumber(),HttpStatus.OK);
+	}
+	
+	@GetMapping("/getAvailableBeds")
+	public List<AvailableBeds> getAllAvailableBeds() {
+		
+		try {
+			List<Bed> bedList = bedrepo.findByBedStatus(true);
+		
+				List<AvailableBeds> abs=new ArrayList<>();
+				// getList = bedList ; // gs = ab ;  gin = abs
+				//GuestsInNotice gs=new GuestsInNotice();
+				bedList.forEach(b->{
+					AvailableBeds ab=new AvailableBeds();
+		            ab.setBuildingId(b.getBuildingId());
+		            ab.setDefaultRent(b.getDefaultRent());
+		            ab.setSecurityDeposit(b.getSecurityDeposit());
+		            ab.setFloorId(b.getFloorId());
+		            ab.setRoomId(b.getRoomId());
+		            ab.setBedName(b.getBedName());
+		            ab.setbId(b.getId());
+		            ab.setBedId(b.getBedId());
+		            ab.setBedStatus(true);         
+		            String roomName=template.getForObject("http://bedService/bed/getRoomName/"+ b.getRoomId(), String.class);
+		            ab.setRoomNumber(roomName);	          
+		
+		            String fn = template.getForObject("http://bedService/bed/getFloorName/"+ b.getFloorId(), String.class); 
+		 ab.setFloorNumber(fn);
+	       String bName=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+ b.getBuildingId(), String.class);
+           ab.setBuildingName(bName);
+		            abs.add(ab);
+				});
+				return abs;
+				
+		}catch (Exception e) {
+					System.out.println(e.getMessage());	}
+		return null;		
+
+		   	}
+
 
 
 }

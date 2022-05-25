@@ -1,9 +1,12 @@
 package com.arshaa.service;
 
 import com.arshaa.common.Bed;
+import com.arshaa.dtos.GuestDto;
 import com.arshaa.entity.Guest;
 import com.arshaa.model.GuestsInNotice;
 import com.arshaa.model.VacatedGuests;
+
+
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -19,6 +22,8 @@ public interface GuestInterface {
     public Guest addGuest(Guest guest) ;
 
     public double updateGuest(Guest guest);
+    
+    List<Guest> getAllGuest();
 
     public void deleteGuest(String guestId);
     public List<Guest> getByGuestId(String guestId) ;
