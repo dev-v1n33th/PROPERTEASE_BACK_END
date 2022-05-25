@@ -2,11 +2,14 @@ package com.arshaa.controller;
 
 import com.arshaa.common.Bed;
 import com.arshaa.common.GuestModel;
+import com.arshaa.dtos.GuestDto;
 import com.arshaa.entity.Guest;
 import com.arshaa.model.GuestsInNotice;
 import com.arshaa.model.VacatedGuests;
 import com.arshaa.repository.GuestRepository;
 import com.arshaa.service.GuestInterface;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -156,6 +159,12 @@ public class GuestController {
    	public ResponseEntity getGuestNumberById(@PathVariable String id) {
    	Guest guest = repository.getNameById(id);
    	return new ResponseEntity(guest.getFirstName().concat(" ").concat(guest.getLastName()) ,HttpStatus.OK );
+   	}
+   	
+   	@GetMapping("/guestReport")
+   	public List<Guest> getAllGuest(){
+		return this.service.getAllGuest();   		   		
+   		
    	}
    	
    	

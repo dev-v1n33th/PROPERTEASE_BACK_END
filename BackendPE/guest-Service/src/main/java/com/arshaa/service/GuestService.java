@@ -2,10 +2,14 @@ package com.arshaa.service;
 
 import com.arshaa.common.Bed;
 import com.arshaa.common.Payment;
+import com.arshaa.dtos.GuestDto;
 import com.arshaa.entity.Guest;
 import com.arshaa.model.GuestsInNotice;
 import com.arshaa.model.VacatedGuests;
 import com.arshaa.repository.GuestRepository;
+
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -35,6 +40,9 @@ public class GuestService implements GuestInterface {
     @Autowired
     @Lazy
     private RestTemplate template;
+    
+    @Autowired
+    private ModelMapper  modelMapper ;
     
     @Autowired
 	@PersistenceContext
@@ -254,6 +262,18 @@ public class GuestService implements GuestInterface {
 		// TODO Auto-generated method stub
 		return em.createNamedStoredProcedureQuery("totalGuestAmount").setParameter("GUEST__ID" , id).getResultList();
 		
+	}
+
+	@Override
+	public List<Guest> getAllGuest() {
+		
+	return repository.findAll();
+	/*
+	 * List<Post> allPost = pagePost.getContent();
+	List<PostDto>  postDtos  = allPost.stream().map((post) -> this.mMapper.map(post, PostDto.class))
+			.collect(Collectors.toList());
+
+	 */
 	}
 
 

@@ -20,6 +20,7 @@ public interface RoomRepository extends JpaRepository<Rooms, Integer>{
 
 	public List<Rooms> getRoomsByFloorId(int floorId);
 
+	Rooms getRoomNameByRoomId(int roomId) ;
 
 
 }
