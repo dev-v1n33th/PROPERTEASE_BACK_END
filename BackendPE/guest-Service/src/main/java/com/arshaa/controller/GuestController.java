@@ -3,22 +3,29 @@ package com.arshaa.controller;
 import com.arshaa.common.Bed;
 import com.arshaa.common.GuestModel;
 import com.arshaa.dtos.GuestDto;
+
 import com.arshaa.entity.Guest;
+import com.arshaa.entity.GuestProfile;
 import com.arshaa.model.GuestsInNotice;
+import com.arshaa.model.ResponseFile;
+import com.arshaa.model.ResponseMessage;
 import com.arshaa.model.VacatedGuests;
 import com.arshaa.repository.GuestRepository;
 import com.arshaa.service.GuestInterface;
-
+import com.arshaa.service.GuestProfileService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @CrossOrigin("*")
 @RestController
@@ -30,6 +37,8 @@ public class GuestController {
 
     @Autowired(required = true)
     private GuestInterface service;
+    @Autowired
+    private GuestProfileService gpServe;
 
     @GetMapping("/getAllGuests")
     public List<GuestDto> getAllGuests() {
@@ -167,9 +176,81 @@ public class GuestController {
    		
    	}
    	
-   	
+   //GuestProfile API's
+
+   	@PostMapping("/upload/{guestId}")
+	  public ResponseEntity<ResponseMessage> uploadFile(@PathVariable String guestId,@RequestParam("file") MultipartFile file) {
+	    String message = "";
+	    try {
+	    	gpServe.store(file,guestId);
+	      message = "Uploaded the file successfully: " + file.getOriginalFilename();
+	      return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+	    } catch (Exception e) {
+	      message = "Can't able to upload file"+file.getOriginalFilename();
+	      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+	    }
+	  }
+	  @GetMapping("/files")
+	  public ResponseEntity<List<ResponseFile>> getListFiles() {
+	    List<ResponseFile> files = gpServe.getAllFiles().map(dbFile -> {
+	      String fileDownloadUri = ServletUriComponentsBuilder
+	          .fromCurrentContextPath()
+	          .path("/files/")
+	          .path(dbFile.getGuestId())
+	          .toUriString();
+	      return new ResponseFile(
+	          dbFile.getName(),
+	          fileDownloadUri,
+	          dbFile.getType(),
+	          dbFile.getData().length);
+	    }).collect(Collectors.toList());
+	    return ResponseEntity.status(HttpStatus.OK).body(files);
+	  }
+	  
+	  
+//	  @GetMapping("/files/{id}")
+//	  public ResponseEntity<byte[]> getFile(@PathVariable String id) {
+//		  UploadFile fileDB = storageService.getFile(id);
+//	    return ResponseEntity.ok()
+//	        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
+//	        .body(fileDB.getData);
+//	  }
+	  
+	  @GetMapping("/files/{guestId}")
+	  public ResponseEntity<ResponseFile> getFilebyID(@PathVariable String guestId) {
+		  GuestProfile fileDB = gpServe.getFileByID(guestId);
+		  String fileDownloadUri = ServletUriComponentsBuilder
+		          .fromCurrentContextPath()
+		          .path("/files/")
+		          .path(fileDB.getGuestId())
+		          .toUriString();
+		  ResponseFile file=new ResponseFile();
+		  file.setUrl(fileDownloadUri);
+		  file.setName(fileDB.getName());
+		  file.setType(fileDB.getType());
+		  file.setSize(fileDB.getData().length);
+	    return new ResponseEntity<ResponseFile>(file,HttpStatus.OK);
+	  }
+//	        
+//	  }
+//	private ResponseEntity<byte[]> ResponseEntity(byte[] bs, HttpStatus ok) {
+//		// TODO Auto-generated method stub
+//		return new ResponseEntity(bs,HttpStatus.OK);
+//	}
+//
+	  
+//	  @GetMapping("/filesData")
+//	    public ResponseEntity<String[]> getListofFiles() {
+//	    	UploadFile f=new UploadFile();
+//	    	f.setName(FileUtil.folderPath);
+//	    	
+//	        return new  ResponseEntity(f,HttpStatus.OK);
+//	  
+//	    }
+
+	}
 
 
 
 
-}
+
