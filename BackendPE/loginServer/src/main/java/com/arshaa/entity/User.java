@@ -48,7 +48,7 @@ public class User {
     private boolean loginStatus;
     @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss", timezone="IST")
     private java.util.Date logoutDate = new java.util.Date(System.currentTimeMillis());
-    
+    //getters and setters
 	public int getUserId() {
 		return userId;
 	}
