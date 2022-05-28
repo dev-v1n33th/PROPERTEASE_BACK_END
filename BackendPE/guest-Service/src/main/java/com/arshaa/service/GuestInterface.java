@@ -40,4 +40,5 @@ public interface GuestInterface {
     public List<VacatedGuests> findByGuestStatus(String guestStatus);
     
     public List<Guest> getTotalPaidByGuestId(String id);
+    
 }
