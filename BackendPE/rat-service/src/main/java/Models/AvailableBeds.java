@@ -22,7 +22,6 @@ public class AvailableBeds {
 	
 	
 	 private double defaultRent;
-	 private double securityDeposit ;
 	 private int floorId ;
 	 private int roomId ;
 	 
@@ -85,12 +84,7 @@ public class AvailableBeds {
 	public void setDefaultRent(double defaultRent) {
 		this.defaultRent = defaultRent;
 	}
-	public double getSecurityDeposit() {
-		return securityDeposit;
-	}
-	public void setSecurityDeposit(double securityDeposit) {
-		this.securityDeposit = securityDeposit;
-	}
+	
 	public int getFloorId() {
 		return floorId;
 	}
@@ -104,7 +98,7 @@ public class AvailableBeds {
 		this.roomId = roomId;
 	}
 	public AvailableBeds(String bedId, int bId, boolean bedStatus, String bedName, int buildingId, String buildingName,
-			String floorNumber, String roomNumber, double defaultRent, double securityDeposit, int floorId,
+			String floorNumber, String roomNumber, double defaultRent, int floorId,
 			int roomId) {
 		super();
 		this.bedId = bedId;
@@ -116,7 +110,6 @@ public class AvailableBeds {
 		this.floorNumber = floorNumber;
 		this.roomNumber = roomNumber;
 		this.defaultRent = defaultRent;
-		this.securityDeposit = securityDeposit;
 		this.floorId = floorId;
 		this.roomId = roomId;
 	}

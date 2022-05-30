@@ -221,19 +221,26 @@ public class GuestController {
 	  
 	  @GetMapping("/files/{guestId}")
 	  public ResponseEntity<ResponseFile> getFilebyID(@PathVariable String guestId) {
-		  GuestProfile fileDB = gpServe.getFileByID(guestId);
-		  String fileDownloadUri = ServletUriComponentsBuilder
-		          .fromCurrentContextPath()
-		          .path("/files/")
-		          .path(fileDB.getGuestId())
-		          .toUriString();
-		  ResponseFile file=new ResponseFile();
-		  file.setUrl(fileDownloadUri);
-		  file.setName(fileDB.getName());
-		  file.setType(fileDB.getType());
-		  file.setSize(fileDB.getData().length);
-	    return new ResponseEntity<ResponseFile>(file,HttpStatus.OK);
-	  }
+		  try {
+			  GuestProfile fileDB = gpServe.getFileByID(guestId);
+			  String fileDownloadUri = ServletUriComponentsBuilder
+			          .fromCurrentContextPath()
+			          .path("/files/")
+			          .path(fileDB.getGuestId())
+			          .toUriString();
+			  ResponseFile file=new ResponseFile();
+			  file.setUrl(fileDownloadUri);
+			  file.setName(fileDB.getName());
+			  file.setType(fileDB.getType());
+			  file.setSize(fileDB.getData().length);
+		    return new ResponseEntity<ResponseFile>(file,HttpStatus.OK);
+  
+		  }
+		  catch(Exception e)
+		  {
+			    return new ResponseEntity("Something went wrong",HttpStatus.OK);
+		  }
+		  	  }
 //	        
 //	  }
 //	private ResponseEntity<byte[]> ResponseEntity(byte[] bs, HttpStatus ok) {

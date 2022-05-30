@@ -14,28 +14,11 @@ public class BedsInfo {
 	private String bedId;
 	private String buildingName;
 	private int bedNum;
-	public BedsInfo(boolean bedStatus, String guestId, double defaultRent, boolean ac, int roomId, int floorId,
-			int buildingId, String bedName, String bedId, String buildingName, int bedNum, double securityDeposit,
-			String guestName, Guest guest, String guestStatus) {
-		super();
-		this.bedStatus = bedStatus;
-		this.guestId = guestId;
-		this.defaultRent = defaultRent;
-		this.ac = ac;
-		this.roomId = roomId;
-		this.floorId = floorId;
-		this.buildingId = buildingId;
-		this.bedName = bedName;
-		this.bedId = bedId;
-		this.buildingName = buildingName;
-		this.bedNum = bedNum;
-		this.securityDeposit = securityDeposit;
-		this.guestName = guestName;
-		this.guest = guest;
-		this.guestStatus = guestStatus;
-	}
-	private double securityDeposit;
-	private String guestName;
+	private String name;
+	  private String url;
+	  private String type;
+	  private long size;
+		private String guestName;
 	private Guest guest;
     private String guestStatus;
 	public boolean isBedStatus() {
@@ -104,12 +87,7 @@ public class BedsInfo {
 	public void setBedNum(int bedNum) {
 		this.bedNum = bedNum;
 	}
-	public double getSecurityDeposit() {
-		return securityDeposit;
-	}
-	public void setSecurityDeposit(double securityDeposit) {
-		this.securityDeposit = securityDeposit;
-	}
+	
 	public String getGuestName() {
 		return guestName;
 	}
@@ -127,6 +105,55 @@ public class BedsInfo {
 	}
 	public void setGuestStatus(String guestStatus) {
 		this.guestStatus = guestStatus;
+	}
+	
+	
+	public BedsInfo(boolean bedStatus, String guestId, double defaultRent, boolean ac, int roomId, int floorId,
+			int buildingId, String bedName, String bedId, String buildingName, int bedNum, String name, String url,
+			String type, long size, String guestName, Guest guest, String guestStatus) {
+		super();
+		this.bedStatus = bedStatus;
+		this.guestId = guestId;
+		this.defaultRent = defaultRent;
+		this.ac = ac;
+		this.roomId = roomId;
+		this.floorId = floorId;
+		this.buildingId = buildingId;
+		this.bedName = bedName;
+		this.bedId = bedId;
+		this.buildingName = buildingName;
+		this.bedNum = bedNum;
+		this.name = name;
+		this.url = url;
+		this.type = type;
+		this.size = size;
+		this.guestName = guestName;
+		this.guest = guest;
+		this.guestStatus = guestStatus;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public long getSize() {
+		return size;
+	}
+	public void setSize(long size) {
+		this.size = size;
 	}
 	public BedsInfo() {
 		super();
