@@ -28,4 +28,11 @@ public interface GuestRepository extends JpaRepository<Guest, Integer> {
 
 	Guest getNameById(String id);
 
+		// Find Guest Who are About to checkOut(Regular + Monthly + Daily) .
+	@Query(value = "select * from guest where check_out_date IS NOT NULL and guest_status ='InNotice' and occupancy_type ='Regular'\r\n"
+			+ "UNION\r\n"
+			+ "select * from guest where check_out_date IS NOT NULL and guest_status ='Active' and occupancy_type IN ('Daily','Monthly'); ", nativeQuery = true)
+	List<Guest> findByCheckOut();
+
+
 }
