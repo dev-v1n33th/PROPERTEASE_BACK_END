@@ -32,6 +32,7 @@ import Models.FloorsInfo;
 import Models.NewBuildModel;
 import Models.RoomsInfo;
 import common.Guest;
+import common.GuestProfile;
 import common.User;
 import net.arshaa.rat.entity.Bed;
 import net.arshaa.rat.entity.Buildings;
@@ -292,7 +293,6 @@ Rooms room = roomRepo.save(newRoom);
 			bed1.setFloorId(newBed.getFloorId());
 			bed1.setCreatedBy(newBed.getCreatedBy());
 			bed1.setCreatedOn(newBed.getCreatedOn());
-			bed1.setSecurityDeposit(newBed.getSecurityDeposit());
 			Bed bed = bedrepo.save(bed1);
 			bed1.setBedId(bed1.getId()+"-"+ rooms.getRoomNumber()+"-"+newBed.getBedName()+"-"+(newBed.isAc()==true ? "AC":"NonAC"));
 			Bed bed2 = bedrepo.save(bed1);
@@ -317,7 +317,6 @@ Rooms room = roomRepo.save(newRoom);
 			bed.setDefaultRent(bedDetails.getDefaultRent());
 			bed.setGuestId(bedDetails.getGuestId());
 			bed.setRoomId(bedDetails.getRoomId());
-			bed.setSecurityDeposit(bedDetails.getSecurityDeposit());
 			bed.setBuildingId(bedDetails.getBuildingId());
 			boolean check=bedrepo.existsByBedId(bedDetails.getBedId());
 			if(check==true)
@@ -558,7 +557,6 @@ Rooms room = roomRepo.save(newRoom);
 												newBed.setAc(bed.isAc());
 												newBed.setBedName(bed.getBedName());
 												newBed.setBedNum(bed.getId());
-												newBed.setSecurityDeposit(bed.getSecurityDeposit());
 												newBed.setBuildingName(getBuilding.get().getBuildingName());
 //												if(bed.isBedStatus()==false)
 //												{
@@ -638,6 +636,12 @@ Rooms room = roomRepo.save(newRoom);
 										//newBed.setGuest(listOfGuests);
 										newBed.setGuestName(listOfGuests.getFirstName());
 										newBed.setGuestStatus(listOfGuests.getGuestStatus());
+										GuestProfile getProfile=template.getForObject("http://guestService/guest/files/" + newBed.getGuestId(),GuestProfile.class);
+                                        newBed.setSize(getProfile.getSize());
+                                        newBed.setName(getProfile.getName());
+                                        newBed.setType(getProfile.getType());
+                                        newBed.setUrl(getProfile.getUrl());
+                                        
 										bedsList.add(newBed);
 									}
 									else {
@@ -686,7 +690,6 @@ Rooms room = roomRepo.save(newRoom);
 									newBed.setBuildingId(bed.getBuildingId());
 									newBed.setAc(bed.isAc());
 									newBed.setDefaultRent(bed.getDefaultRent());
-									newBed.setSecurityDeposit(bed.getSecurityDeposit());
 									newBed.setBuildingName(getBuilding.get().getBuildingName());
 									bedsList.add(newBed);
 								});
@@ -726,7 +729,6 @@ Rooms room = roomRepo.save(newRoom);
 									newBed.setBuildingId(bed.getBuildingId());
 									newBed.setAc(bed.isAc());
 									newBed.setDefaultRent(bed.getDefaultRent());
-									newBed.setSecurityDeposit(bed.getSecurityDeposit());
 									newBed.setBuildingName(getBuilding.get().getBuildingName());
 									bedsList.add(newBed);
 								});
@@ -766,7 +768,6 @@ Rooms room = roomRepo.save(newRoom);
 							newBed.setBuildingId(bed.getBuildingId());
 							newBed.setAc(bed.isAc());
 							newBed.setDefaultRent(bed.getDefaultRent());
-							newBed.setSecurityDeposit(bed.getSecurityDeposit());
 							newBed.setBuildingName(getBuilding.get().getBuildingName());
 							bedsList.add(newBed);
 
@@ -1020,7 +1021,6 @@ Rooms room = roomRepo.save(newRoom);
 					AvailableBeds ab=new AvailableBeds();
 		            ab.setBuildingId(b.getBuildingId());
 		            ab.setDefaultRent(b.getDefaultRent());
-		            ab.setSecurityDeposit(b.getSecurityDeposit());
 		            ab.setFloorId(b.getFloorId());
 		            ab.setRoomId(b.getRoomId());
 		            ab.setBedName(b.getBedName());

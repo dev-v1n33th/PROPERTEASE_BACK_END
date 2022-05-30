@@ -33,8 +33,7 @@ public class Bed {
     private double defaultRent;
     @Column
     private boolean ac;
-    @Column
-    private double securityDeposit;
+    
     @Column
     private String createdBy;
     @Column
@@ -91,12 +90,7 @@ public class Bed {
 	public void setAc(boolean ac) {
 		this.ac = ac;
 	}
-	public double getSecurityDeposit() {
-		return securityDeposit;
-	}
-	public void setSecurityDeposit(double securityDeposit) {
-		this.securityDeposit = securityDeposit;
-	}
+	
 	public String getCreatedBy() {
 		return createdBy;
 	}
@@ -122,7 +116,7 @@ public class Bed {
 		this.createdOn = createdOn;
 	}
 	public Bed(int id, String bedId, int roomId, boolean bedStatus, String guestId, String bedName, double defaultRent,
-			boolean ac, double securityDeposit, String createdBy, int floorId, int buildingId,
+			boolean ac, String createdBy, int floorId, int buildingId,
 			java.util.Date createdOn) {
 		super();
 		this.id = id;
@@ -133,7 +127,6 @@ public class Bed {
 		this.bedName = bedName;
 		this.defaultRent = defaultRent;
 		this.ac = ac;
-		this.securityDeposit = securityDeposit;
 		this.createdBy = createdBy;
 		this.floorId = floorId;
 		this.buildingId = buildingId;
