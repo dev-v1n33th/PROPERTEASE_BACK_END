@@ -6,6 +6,7 @@ import com.arshaa.dtos.GuestDto;
 
 import com.arshaa.entity.Guest;
 import com.arshaa.entity.GuestProfile;
+import com.arshaa.entity.SecurityDeposit;
 import com.arshaa.model.GuestsInNotice;
 import com.arshaa.model.ResponseFile;
 import com.arshaa.model.ResponseMessage;
@@ -13,6 +14,7 @@ import com.arshaa.model.VacatedGuests;
 import com.arshaa.repository.GuestRepository;
 import com.arshaa.service.GuestInterface;
 import com.arshaa.service.GuestProfileService;
+import com.arshaa.service.SecurityDepositService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,7 +41,8 @@ public class GuestController {
     private GuestInterface service;
     @Autowired
     private GuestProfileService gpServe;
-
+    @Autowired
+    private SecurityDepositService securityDepositService;
     @GetMapping("/getAllGuests")
     public List<GuestDto> getAllGuests() {
         return service.getGuests();
@@ -247,6 +250,29 @@ public class GuestController {
 //	        return new  ResponseEntity(f,HttpStatus.OK);
 //	  
 //	    }
+	  
+	  
+	  // SecurityDeposit API's
+	  @PostMapping("/addSecurityDeposit")
+		public ResponseEntity<SecurityDeposit> addData(@RequestBody SecurityDeposit sdepo){
+		  
+		  return securityDepositService.addData(sdepo);
+			
+		}
+	  @GetMapping("/getSecurityDeposit")
+		public ResponseEntity<List<SecurityDeposit>> getData(){
+			return securityDepositService.getData();
+		}
+	  @PutMapping("/updateSecurityDeposit/{id}")
+		public ResponseEntity  updateDataById(@PathVariable int id,@RequestBody SecurityDeposit sdepo) {
+			return securityDepositService.updateDataById(id, sdepo);
+		}
+	  @DeleteMapping("deleteSecurityDeposit/{id}")
+		public ResponseEntity  deleteDataById(@PathVariable int id) {
+		  return securityDepositService.deleteDataById(id);
+	  }
+	  
+	  
 
 	}
 
