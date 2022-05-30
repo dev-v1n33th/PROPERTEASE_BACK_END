@@ -198,6 +198,7 @@ public class GuestController {
 	    List<ResponseFile> files = gpServe.getAllFiles().map(dbFile -> {
 	      String fileDownloadUri = ServletUriComponentsBuilder
 	          .fromCurrentContextPath()
+	          .path("/guest/")
 	          .path("/files/")
 	          .path(dbFile.getGuestId())
 	          .toUriString();
@@ -225,6 +226,7 @@ public class GuestController {
 			  GuestProfile fileDB = gpServe.getFileByID(guestId);
 			  String fileDownloadUri = ServletUriComponentsBuilder
 			          .fromCurrentContextPath()
+			          .path("/guest/")
 			          .path("/files/")
 			          .path(fileDB.getGuestId())
 			          .toUriString();
