@@ -15,6 +15,7 @@ import com.arshaa.repository.GuestRepository;
 import com.arshaa.service.GuestInterface;
 import com.arshaa.service.GuestProfileService;
 import com.arshaa.service.SecurityDepositService;
+import com.google.common.net.HttpHeaders;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -227,7 +228,7 @@ public class GuestController {
 			  String fileDownloadUri = ServletUriComponentsBuilder
 			          .fromCurrentContextPath()
 			          .path("/guest/")
-			          .path("/files/")
+			          .path("/getImage/")
 			          .path(fileDB.getGuestId())
 			          .toUriString();
 			  ResponseFile file=new ResponseFile();
@@ -243,8 +244,18 @@ public class GuestController {
 			    return new ResponseEntity("Something went wrong",HttpStatus.OK);
 		  }
 		  	  }
-//	        
-//	  }
+	  
+	  
+	  
+	  @GetMapping("/getImage/{id}")
+	  public ResponseEntity<byte[]> getFile(@PathVariable String id) {
+		  GuestProfile fileDB = gpServe.getFileByID(id);
+	    return ResponseEntity.ok()
+	        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
+	        .body(fileDB.getData());
+	  }
+	        
+	  
 //	private ResponseEntity<byte[]> ResponseEntity(byte[] bs, HttpStatus ok) {
 //		// TODO Auto-generated method stub
 //		return new ResponseEntity(bs,HttpStatus.OK);
