@@ -80,4 +80,16 @@ public class SecurityDepositServiceImpl implements SecurityDepositService {
 		}
 	}
 
+	@Override
+	public ResponseEntity getSecurityDepositByOccupencyType(String occupencyType) {
+		try {
+			SecurityDeposit otype = securityDepositRepo.findByOccupencyType(occupencyType);
+			return new ResponseEntity<>(otype,HttpStatus.OK);
+		}
+		catch(Exception e) {
+			return new ResponseEntity("Something Wrong",HttpStatus.OK);
+		}
+	}
+		
+
 }
