@@ -12,7 +12,7 @@ public interface SecurityDepositService {
 	public ResponseEntity<List<SecurityDeposit>> getData();
 	public ResponseEntity  updateDataById(int id,SecurityDeposit sdepo);
 	public ResponseEntity  deleteDataById(int id);
-	
+	public ResponseEntity getSecurityDepositByOccupencyType(String occupencyType);
 	
 	
 

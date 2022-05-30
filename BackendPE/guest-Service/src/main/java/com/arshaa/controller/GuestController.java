@@ -272,6 +272,12 @@ public class GuestController {
 		  return securityDepositService.deleteDataById(id);
 	  }
 	  
+	  //Get Security Deposit By Occupency Type API
+	  @GetMapping("/getSecurityDepositByOccupencyType/{occupencyType}")
+	  public ResponseEntity getSecurityDepositByOccupencyType(@PathVariable String occupencyType) {
+		  return securityDepositService.getSecurityDepositByOccupencyType(occupencyType);
+		  
+	  }
 	  
 
 	}
