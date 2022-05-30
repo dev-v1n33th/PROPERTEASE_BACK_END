@@ -64,6 +64,9 @@ public class BedController {
 
 	@Autowired
 	private RoomRepository roomRepo;
+	
+	
+	
 
 	@Autowired
 	private BedSummaryRepo bedsumRepo;
@@ -402,8 +405,15 @@ Rooms room = roomRepo.save(newRoom);
 	public ResponseEntity<String> deleteRoom(@PathVariable int id) {
 
 		try {
-			roomRepo.deleteById(id);
-			return new ResponseEntity<String>("Deleted Successfully", HttpStatus.OK);
+			List<Bed> getBeds=bedrepo.getBedsByRoomId(id);
+			if(getBeds.isEmpty())
+			{
+				roomRepo.deleteById(id);
+				return new ResponseEntity<String>("Deleted Successfully", HttpStatus.OK);
+			}
+			else {
+				return new ResponseEntity<String>("Action Failed:This Room Contains Beds", HttpStatus.OK);
+			}
 		} catch (Exception e) {
 			return new ResponseEntity<String>("Something went wrong", HttpStatus.OK);
 
@@ -430,8 +440,14 @@ Rooms room = roomRepo.save(newRoom);
 		public ResponseEntity<String> deletebed(@PathVariable int id) {
 
 			try {
-				bedrepo.deleteById(id);
-				return new ResponseEntity<String>("Deleted Successfully", HttpStatus.OK);
+				if((bedrepo.getById(id).getGuestId()).equals(null))
+				{
+					bedrepo.deleteById(id);
+					return new ResponseEntity<String>("Deleted Successfully", HttpStatus.OK);
+				}
+				else {
+					return new ResponseEntity<String>("Action Failed: Bed contains Guest", HttpStatus.OK);
+				}
 			} catch (Exception e) {
 				return new ResponseEntity<String>("Something went wrong", HttpStatus.OK);
 
@@ -951,7 +967,7 @@ Rooms room = roomRepo.save(newRoom);
 		
 	}
 	}
-
+	
 	@GetMapping(path = "/getBedsByRoomId/{roomId}")
 	public ResponseEntity<List<Floors>> getBedsByRoomId(@PathVariable int roomId) {
 	{
