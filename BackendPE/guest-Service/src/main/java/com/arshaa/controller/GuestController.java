@@ -44,10 +44,12 @@ public class GuestController {
     private GuestProfileService gpServe;
     @Autowired
     private SecurityDepositService securityDepositService;
-    @GetMapping("/getAllGuests")
-    public List<GuestDto> getAllGuests() {
-        return service.getGuests();
-    }
+   // Guest Reports Sorted .
+	@GetMapping("/getAllGuests/{field}")
+	public List<GuestDto> getAllGuests(@PathVariable String field) {
+		return service.getGuests(field);
+	}
+
 
     @PostMapping("/addGuest")
     public Guest saveGuest(@RequestBody Guest guest) {
@@ -133,12 +135,7 @@ public class GuestController {
    	public List<Guest> getOnlyDues(@PathVariable String id){
    		return service.getOnlyDues(id);
    	}
-   	@GetMapping("/findGuestsAreInNotice/{guestStatus}")
-   	public List<GuestsInNotice> findByBuildingIdAndGuestStatus(@PathVariable String guestStatus)
-   	{
-
-		return service.findByBuildingIdAndGuestStatus(guestStatus);
-   	}
+   	
 
    	@GetMapping("/findGuestAreVacated/{guestStatus}")
    	public List<VacatedGuests> findByGuestStatus(@PathVariable String guestStatus)
@@ -298,6 +295,33 @@ public class GuestController {
 		  return securityDepositService.getSecurityDepositByOccupencyType(occupencyType);
 		  
 	  }
+
+	// Api for Showing guest About to check Out .
+	@GetMapping("/getGuestAboutToCheckOut/RegulatInNotice/Daily-Monthly-Active")
+	public List<GuestsInNotice> getAll() {
+		List<Guest> getList = repository.findByCheckOut();
+		List<GuestsInNotice> gin = new ArrayList<>();
+
+		// GuestsInNotice gs=new GuestsInNotice();
+		getList.forEach(g -> {
+			GuestsInNotice gs = new GuestsInNotice();
+			gs.setBedId(g.getBedId());
+			// String
+			// name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+
+			// g.getBuildingId(), String.class);
+			// gs.setBuildingName(name);
+
+			gs.setCheckOutDate(g.getCheckOutDate());
+			gs.setEmail(g.getEmail());
+			gs.setBedId(g.getBedId());
+			gs.setFirstName(g.getFirstName().concat(" ".concat(g.getLastName())));
+			gs.setPersonalNumber(g.getPersonalNumber());
+			gs.setId(g.getId());
+			gin.add(gs);
+		});
+
+		return gin;
+	}  
 	  
 
 	}
