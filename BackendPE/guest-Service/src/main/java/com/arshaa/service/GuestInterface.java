@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 public interface GuestInterface {
 
-    public List<GuestDto> getGuests();
+    public List<GuestDto> getGuests(String field);
 
     public Guest getGuestById(String guestId);
 
