@@ -171,11 +171,11 @@ public class GuestController {
    	return new ResponseEntity(guest.getFirstName().concat(" ").concat(guest.getLastName()) ,HttpStatus.OK );
    	}
    	
-   	@GetMapping("/guestReport")
-   	public List<Guest> getAllGuest(){
-		return this.service.getAllGuest();   		   		
-   		
-   	}
+//   	@GetMapping("/guestReport")
+//   	public List<Guest> getAllGuest(){
+//		return this.service.getAllGuest();   		   		
+//   		
+//   	}
    	
    //GuestProfile API's
 
