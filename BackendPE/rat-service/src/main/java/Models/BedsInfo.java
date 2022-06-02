@@ -1,6 +1,7 @@
 package Models;
 
 import common.Guest;
+import common.Response;
 
 public class BedsInfo {
 	private boolean bedStatus;
@@ -15,12 +16,15 @@ public class BedsInfo {
 	private String buildingName;
 	private int bedNum;
 	private String name;
-	  private String url;
+	  private byte[] url;
 	  private String type;
 	  private long size;
 		private String guestName;
 	private Guest guest;
     private String guestStatus;
+    
+    
+    private Object data;
 	public boolean isBedStatus() {
 		return bedStatus;
 	}
@@ -108,40 +112,18 @@ public class BedsInfo {
 	}
 	
 	
-	public BedsInfo(boolean bedStatus, String guestId, double defaultRent, boolean ac, int roomId, int floorId,
-			int buildingId, String bedName, String bedId, String buildingName, int bedNum, String name, String url,
-			String type, long size, String guestName, Guest guest, String guestStatus) {
-		super();
-		this.bedStatus = bedStatus;
-		this.guestId = guestId;
-		this.defaultRent = defaultRent;
-		this.ac = ac;
-		this.roomId = roomId;
-		this.floorId = floorId;
-		this.buildingId = buildingId;
-		this.bedName = bedName;
-		this.bedId = bedId;
-		this.buildingName = buildingName;
-		this.bedNum = bedNum;
-		this.name = name;
-		this.url = url;
-		this.type = type;
-		this.size = size;
-		this.guestName = guestName;
-		this.guest = guest;
-		this.guestStatus = guestStatus;
-	}
+	
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getUrl() {
+	public byte[] getUrl() {
 		return url;
 	}
-	public void setUrl(String url) {
-		this.url = url;
+	public void setUrl(byte[] bs) {
+		this.url = bs;
 	}
 	public String getType() {
 		return type;
@@ -158,6 +140,12 @@ public class BedsInfo {
 	public BedsInfo() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+	public Object getData() {
+		return data;
+	}
+	public void setData(Object object) {
+		this.data = object;
 	}
 
 	 

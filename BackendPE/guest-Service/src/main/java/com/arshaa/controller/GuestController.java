@@ -7,7 +7,9 @@ import com.arshaa.dtos.GuestDto;
 import com.arshaa.entity.Guest;
 import com.arshaa.entity.GuestProfile;
 import com.arshaa.entity.SecurityDeposit;
+import com.arshaa.model.GuestImageDisplay;
 import com.arshaa.model.GuestsInNotice;
+import com.arshaa.model.Response;
 import com.arshaa.model.ResponseFile;
 import com.arshaa.model.ResponseMessage;
 import com.arshaa.model.VacatedGuests;
@@ -18,6 +20,7 @@ import com.arshaa.service.SecurityDepositService;
 import com.google.common.net.HttpHeaders;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.StreamUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -194,23 +197,23 @@ public class GuestController {
 	      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
 	    }
 	  }
-	  @GetMapping("/files")
-	  public ResponseEntity<List<ResponseFile>> getListFiles() {
-	    List<ResponseFile> files = gpServe.getAllFiles().map(dbFile -> {
-	      String fileDownloadUri = ServletUriComponentsBuilder
-	          .fromCurrentContextPath()
-	          .path("/guest/")
-	          .path("/files/")
-	          .path(dbFile.getGuestId())
-	          .toUriString();
-	      return new ResponseFile(
-	          dbFile.getName(),
-	          fileDownloadUri,
-	          dbFile.getType(),
-	          dbFile.getData().length);
-	    }).collect(Collectors.toList());
-	    return ResponseEntity.status(HttpStatus.OK).body(files);
-	  }
+//	  @GetMapping("/files")
+//	  public ResponseEntity<List<ResponseFile>> getListFiles() {
+//	    List<ResponseFile> files = gpServe.getAllFiles().map(dbFile -> {
+//	      String fileDownloadUri = ServletUriComponentsBuilder
+//	          .fromCurrentContextPath()
+//	          .path("/guest/")
+//	          .path("/files/")
+//	          .path(dbFile.getGuestId())
+//	          .toUriString();
+//	      return new ResponseFile(
+//	          dbFile.getName(),
+//	          fileDownloadUri,
+//	          dbFile.getType(),
+//	          dbFile.getData().length);
+//	    }).collect(Collectors.toList());
+//	    return ResponseEntity.status(HttpStatus.OK).body(files);
+//	  }
 	  
 	  
 //	  @GetMapping("/files/{id}")
@@ -223,25 +226,31 @@ public class GuestController {
 	  
 	  @GetMapping("/files/{guestId}")
 	  public ResponseEntity<ResponseFile> getFilebyID(@PathVariable String guestId) {
+		  Response r=new Response();
+
 		  try {
 			  GuestProfile fileDB = gpServe.getFileByID(guestId);
-			  String fileDownloadUri = ServletUriComponentsBuilder
-			          .fromCurrentContextPath()
-			          .path("/guest/")
-			          .path("/getImage/")
-			          .path(fileDB.getGuestId())
-			          .toUriString();
+//			  String fileDownloadUri = ServletUriComponentsBuilder
+////	          .fromCurrentContextPath()
+////			          
+////			          .path("localhost:8989/guest/")
+////			          .path("/getImage/")
+////			          .path(fileDB.getGuestId())
+////			          .toUriString();
 			  ResponseFile file=new ResponseFile();
-			  file.setUrl(fileDownloadUri);
+			  file.setData(fileDB.getData());
+			 // file.setUrl("localhost:8989/guest/getImage/"+fileDB.getGuestId());
 			  file.setName(fileDB.getName());
 			  file.setType(fileDB.getType());
 			  file.setSize(fileDB.getData().length);
-		    return new ResponseEntity<ResponseFile>(file,HttpStatus.OK);
+			 // r.setData(file);
+		    return new ResponseEntity(file,HttpStatus.OK);
   
 		  }
 		  catch(Exception e)
 		  {
-			    return new ResponseEntity("Something went wrong",HttpStatus.OK);
+			  r.setData(null);			 
+			  return new ResponseEntity(r,HttpStatus.OK);
 		  }
 		  	  }
 	  
@@ -249,10 +258,29 @@ public class GuestController {
 	  
 	  @GetMapping("/getImage/{id}")
 	  public ResponseEntity<byte[]> getFile(@PathVariable String id) {
-		  GuestProfile fileDB = gpServe.getFileByID(id);
-	    return ResponseEntity.ok()
-	        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
-	        .body(fileDB.getData());
+		  Response r=new Response();
+
+		  try {
+			  GuestProfile fileDB = gpServe.getFileByID(id);
+			  
+			 // r.setData(fileDB.getData());
+			  //GuestImageDisplay image= new GuestImageDisplay();
+			  //image.setData(fileDB.getData());
+			    return ResponseEntity.ok()
+			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
+			        .body(fileDB.getData());
+			  
+			//ResponseEntity url=  new ResponseEntity(fileDB.getData(),HttpStatus.OK);
+			//r.setData(url);
+			//StreamUtils.copy(fileDB.)
+//			  r.setData(fileDB);
+//			return new ResponseEntity(r,HttpStatus.OK);
+		  }
+		 catch(Exception e) {
+			   r.setData(null);
+			    return new ResponseEntity(r,HttpStatus.OK);
+
+		 }
 	  }
 	        
 	  
