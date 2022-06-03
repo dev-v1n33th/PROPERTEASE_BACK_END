@@ -20,10 +20,12 @@ import com.arshaa.service.SecurityDepositService;
 import com.google.common.net.HttpHeaders;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.util.StreamUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -40,6 +42,11 @@ public class GuestController {
 
 	@Autowired(required = true)
     private GuestRepository repository;
+	
+	 @Autowired
+	    @Lazy
+	    private RestTemplate template;
+	    
 
     @Autowired(required = true)
     private GuestInterface service;
@@ -334,10 +341,10 @@ public class GuestController {
 		getList.forEach(g -> {
 			GuestsInNotice gs = new GuestsInNotice();
 			gs.setBedId(g.getBedId());
-			// String
-			// name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+
-			// g.getBuildingId(), String.class);
-			// gs.setBuildingName(name);
+			 String
+			 name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+
+			 g.getBuildingId(), String.class);
+			 gs.setBuildingName(name);
 
 			gs.setCheckOutDate(g.getCheckOutDate());
 			gs.setEmail(g.getEmail());
