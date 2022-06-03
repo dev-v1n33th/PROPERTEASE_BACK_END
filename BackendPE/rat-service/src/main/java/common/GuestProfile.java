@@ -6,6 +6,14 @@ public class GuestProfile {
 	  private String url;
 	  private String type;
 	  private long size;
+	  private byte[] data;
+
+	public byte[] getData() {
+		return data;
+	}
+	public void setData(byte[] data) {
+		this.data = data;
+	}
 	public String getName() {
 		return name;
 	}

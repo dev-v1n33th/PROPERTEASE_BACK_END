@@ -33,6 +33,7 @@ import Models.NewBuildModel;
 import Models.RoomsInfo;
 import common.Guest;
 import common.GuestProfile;
+import common.Response;
 import common.User;
 import net.arshaa.rat.entity.Bed;
 import net.arshaa.rat.entity.Buildings;
@@ -636,13 +637,13 @@ Rooms room = roomRepo.save(newRoom);
 										//newBed.setGuest(listOfGuests);
 										newBed.setGuestName(listOfGuests.getFirstName());
 										newBed.setGuestStatus(listOfGuests.getGuestStatus());
-										GuestProfile getProfile=template.getForObject("http://guestService/guest/files/" + newBed.getGuestId(),GuestProfile.class);
-                                        newBed.setSize(getProfile.getSize());
+										
+										GuestProfile getProfile=template.getForObject("http://guestService/guest/files/" + newBed.getGuestId(),GuestProfile.class);										
                                         newBed.setName(getProfile.getName());
                                         newBed.setType(getProfile.getType());
-                                        newBed.setUrl(getProfile.getUrl());
-                                        
+                                        newBed.setUrl(getProfile.getData());							 
 										bedsList.add(newBed);
+
 									}
 									else {
 										bedsList.add(newBed);

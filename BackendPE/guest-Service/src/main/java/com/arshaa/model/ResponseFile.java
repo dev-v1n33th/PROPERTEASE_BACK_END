@@ -6,6 +6,14 @@ public class ResponseFile {
 	  private String url;
 	  private String type;
 	  private long size;
+	  private byte[] data;
+
+	public byte[] getData() {
+		return data;
+	}
+	public void setData(byte[] data) {
+		this.data = data;
+	}
 	public String getName() {
 		return name;
 	}
@@ -30,12 +38,14 @@ public class ResponseFile {
 	public void setSize(long size) {
 		this.size = size;
 	}
-	public ResponseFile(String name, String url, String type, long size) {
+	
+	public ResponseFile(String name, String url, String type, long size, byte[] data) {
 		super();
 		this.name = name;
 		this.url = url;
 		this.type = type;
 		this.size = size;
+		this.data = data;
 	}
 	public ResponseFile() {
 		super();
