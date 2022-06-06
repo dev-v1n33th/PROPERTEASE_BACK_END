@@ -38,6 +38,9 @@ public class PayCOntroller {
 	public Payments addPayment(@RequestBody Payments payment) {
 		return this.serve.addPayment(payment);
 	}
+	{
+	
+	}
 
 	// http://localhost:8989/payment/updatePaymentByPaymentId/{paymentId}
 	// UPDATING PAYMENT BASED ON PAYMENT ID.
