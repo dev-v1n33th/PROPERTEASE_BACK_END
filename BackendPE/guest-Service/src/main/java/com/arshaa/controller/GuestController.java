@@ -35,10 +35,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/guest")
-public class GuestController {
+public class GuestController<E> {
+	
+	 @Autowired
+		@PersistenceContext
+		private EntityManager em;
 
 	@Autowired(required = true)
     private GuestRepository repository;
@@ -332,19 +339,27 @@ public class GuestController {
 	  }
 
 	// Api for Showing guest About to check Out .
-	@GetMapping("/getGuestAboutToCheckOut/RegulatInNotice/Daily-Monthly-Active")
-	public List<GuestsInNotice> getAll() {
-		List<Guest> getList = repository.findByCheckOut();
+	@GetMapping("/getGuestAboutToCheckOut/RegulatInNotice/Daily-Monthly-Active/{id}")
+	public List<GuestsInNotice> getAll(@PathVariable String id) {
+		try
+		{
+			
+		
+		List<Guest> getList = repository.findByCheckOut(id);
 		List<GuestsInNotice> gin = new ArrayList<>();
 
 		// GuestsInNotice gs=new GuestsInNotice();
 		getList.forEach(g -> {
-			GuestsInNotice gs = new GuestsInNotice();
+			GuestsInNotice<E> gs = new GuestsInNotice();
 			gs.setBedId(g.getBedId());
 			 String
 			 name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+
 			 g.getBuildingId(), String.class);
 			 gs.setBuildingName(name);
+ 
+// List<E>  listOfDues =(List<E>) template.getForObject("http://guestService/guest/onClickDues/" + gs.getId(),Guest.class);
+		
+ gs.setDueAmount(em.createNamedStoredProcedureQuery("onlyDues").setParameter("GUEST__ID" , id).getResultList());
 
 			gs.setCheckOutDate(g.getCheckOutDate());
 			gs.setEmail(g.getEmail());
@@ -354,8 +369,15 @@ public class GuestController {
 			gs.setId(g.getId());
 			gin.add(gs);
 		});
+		
 
 		return gin;
+		}
+		catch(Exception e){
+		System.out.println(e.getLocalizedMessage().concat("something is fishy"));
+			
+		}
+		return null;
 	}  
 	  
 

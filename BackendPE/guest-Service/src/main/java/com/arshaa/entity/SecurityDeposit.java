@@ -5,6 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.UniqueElements;
 @Entity
 public class SecurityDeposit {
 	
@@ -15,16 +18,9 @@ public class SecurityDeposit {
 	private double securityDepositAmount;
 	private String occupencyType;
 	
-	public SecurityDeposit() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	public SecurityDeposit(int id, double securityDepositAmount, String occupencyType) {
-		super();
-		this.id = id;
-		this.securityDepositAmount = securityDepositAmount;
-		this.occupencyType = occupencyType;
-	}
+	
+	@UniqueElements
+	private int noticeDays;
 	public int getId() {
 		return id;
 	}
@@ -43,6 +39,24 @@ public class SecurityDeposit {
 	public void setOccupencyType(String occupencyType) {
 		this.occupencyType = occupencyType;
 	}
+	public int getNoticeDays() {
+		return noticeDays;
+	}
+	public void setNoticeDays(int noticeDays) {
+		this.noticeDays = noticeDays;
+	}
+	public SecurityDeposit(int id, double securityDepositAmount, String occupencyType, int noticeDays) {
+		super();
+		this.id = id;
+		this.securityDepositAmount = securityDepositAmount;
+		this.occupencyType = occupencyType;
+		this.noticeDays = noticeDays;
+	}
+	public SecurityDeposit() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
 	
 	
 

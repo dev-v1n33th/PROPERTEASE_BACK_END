@@ -1,11 +1,13 @@
 package com.arshaa.model;
 
+import java.util.List;
+
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-public class GuestsInNotice {
+public class GuestsInNotice<E> {
 
     private String firstName;
     private String id;
@@ -13,7 +15,9 @@ public class GuestsInNotice {
     private String bedId;
     private String personalNumber;
     private String email;
-    private double dueAmount;
+    private List<E> dueAmount  ;
+    // private List<E> totalDueAmount;
+    
     @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss", timezone="IST")
 	//@Temporal(TemporalType.TIMESTAMP)
     private java.util.Date checkInDate = new java.util.Date(System.currentTimeMillis());
@@ -24,6 +28,12 @@ public class GuestsInNotice {
 	}
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
+	}
+	public List<E> getDueAmount() {
+		return dueAmount;
+	}
+	public void setDueAmount(List<E> dueAmount) {
+		this.dueAmount = dueAmount;
 	}
 	public String getId() {
 		return id;
@@ -55,12 +65,7 @@ public class GuestsInNotice {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public double getDueAmount() {
-		return dueAmount;
-	}
-	public void setDueAmount(double dueAmount) {
-		this.dueAmount = dueAmount;
-	}
+	
 	public java.util.Date getCheckInDate() {
 		return checkInDate;
 	}
