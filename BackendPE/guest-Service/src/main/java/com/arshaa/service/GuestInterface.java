@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 public interface GuestInterface {
 
-    public List<GuestDto> getGuests(String field);
+    public List<GuestDto> getGuests();
 
     public Guest getGuestById(String guestId);
 
@@ -23,7 +23,7 @@ public interface GuestInterface {
 
     public double updateGuest(Guest guest);
     
-    
+    List<Guest> getAllGuest();
 
     public void deleteGuest(String guestId);
     public List<Guest> getByGuestId(String guestId) ;
@@ -36,7 +36,7 @@ public interface GuestInterface {
     public List<Guest> getFinalDueAmountById(String id);
     
     public List<Guest> getOnlyDues(String id);
-    
+    public List<GuestsInNotice> findByBuildingIdAndGuestStatus(String guestStatus);
     public List<VacatedGuests> findByGuestStatus(String guestStatus);
     
     public List<Guest> getTotalPaidByGuestId(String id);

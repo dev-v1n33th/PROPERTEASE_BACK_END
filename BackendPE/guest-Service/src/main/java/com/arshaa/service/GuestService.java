@@ -12,7 +12,6 @@ import com.arshaa.repository.GuestRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -49,34 +48,34 @@ public class GuestService implements GuestInterface {
 	@PersistenceContext
 	private EntityManager em;
 
-   @Override
-	public List<GuestDto> getGuests(String field) {
-		List<Guest> getGuest = repository.findAll(Sort.by(Sort.Direction.DESC, field));
-		List<GuestDto> gdto = new ArrayList<>();
-
-		getGuest.forEach(s -> {
-			GuestDto d = new GuestDto();
-			d.setAadharNumber(s.getAadharNumber());
-			d.setBedId(s.getBedId());
-			d.setBuildingId(s.getBuildingId());
-			d.setGuestName(s.getFirstName().concat(" ").concat(s.getLastName()));
-			d.setAmountPaid(s.getAmountPaid());
-			d.setBuildingId(s.getBuildingId());
-			String name = template.getForObject(
-					"http://bedService/bed/getBuildingNameByBuildingId/" + s.getBuildingId(), String.class);
-			d.setBuildingName(name);
-			d.setPersonalNumber(s.getPersonalNumber());
-			d.setCheckInDate(s.getCheckInDate());
-			d.setCheckOutDate(s.getCheckOutDate());
-			d.setAddressLine1(s.getAddressLine1());
-			d.setAddressLine2(s.getAddressLine2());
-			d.setId(s.getId());
-			d.setDefaultRent(s.getDefaultRent());
-			gdto.add(d);
-
-		});
-		return gdto;
-	}
+    @Override
+    public List<GuestDto> getGuests() {
+       List<Guest> getGuest = repository.findAll();
+       List<GuestDto> gdto = new ArrayList<>();
+       
+       getGuest.forEach(s-> {
+    	   GuestDto d = new GuestDto();
+    	   d.setAadharNumber(s.getAadharNumber());
+    	   d.setBedId(s.getBedId());
+    	   d.setBuildingId(s.getBuildingId());
+    	   d.setGuestName(s.getFirstName().concat(" ").concat(s.getLastName()));
+    	   d.setAmountPaid(s.getAmountPaid());
+    	   d.setBuildingId(s.getBuildingId());
+    	   String name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+ s.getBuildingId(), String.class);
+           d.setBuildingName(name);
+           d.setPersonalNumber(s.getPersonalNumber());
+           d.setCheckInDate(s.getCheckInDate());
+           d.setCheckOutDate(s.getCheckOutDate());
+           d.setAddressLine1(s.getAddressLine1());
+           d.setAddressLine2(s.getAddressLine2());
+           d.setId(s.getId());
+           d.setDefaultRent(s.getDefaultRent());
+           gdto.add(d);
+           
+       });
+       return gdto ;
+    }
+    
 
     @Override
     public Guest getGuestById(String guestId) {
@@ -234,8 +233,29 @@ public class GuestService implements GuestInterface {
 		// TODO Auto-generated method stub
 		return em.createNamedStoredProcedureQuery("onlyDues").setParameter("GUEST__ID" , id).getResultList();
 	}
+	public List<GuestsInNotice> findByBuildingIdAndGuestStatus(String guestStatus)
+   	{
 
-	
+		List<Guest> getList = repository.findByGuestStatus(guestStatus);
+		List<GuestsInNotice> gin=new ArrayList<>();
+		
+		//GuestsInNotice gs=new GuestsInNotice();
+		getList.forEach(g->{
+			GuestsInNotice gs=new GuestsInNotice();
+            gs.setBedId(g.getBedId());
+            String name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+ g.getBuildingId(), String.class);
+            gs.setBuildingName(name);
+            gs.setCheckInDate(g.getCheckInDate());
+            gs.setCheckOutDate(g.getPlannedCheckOutDate());
+            gs.setEmail(g.getEmail());
+            gs.setBedId(g.getBedId());
+            gs.setFirstName(g.getFirstName());
+            gs.setPersonalNumber(g.getPersonalNumber());
+            gs.setId(g.getId());
+            gin.add(gs);
+		});
+		return gin;
+   	}
 
 	public List<VacatedGuests> findByGuestStatus(String guestStatus)
    	{
@@ -268,7 +288,17 @@ public class GuestService implements GuestInterface {
 		
 	}
 
-	
+	@Override
+	public List<Guest> getAllGuest() {
+		
+	return repository.findAll();
+	/*
+	 * List<Post> allPost = pagePost.getContent();
+	List<PostDto>  postDtos  = allPost.stream().map((post) -> this.mMapper.map(post, PostDto.class))
+			.collect(Collectors.toList());
+
+	 */
+	}
 
 
 }

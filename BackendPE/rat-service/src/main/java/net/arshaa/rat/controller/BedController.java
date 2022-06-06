@@ -112,7 +112,7 @@ public class BedController {
 			    java.sql.Date tSqlDate = new java.sql.Date(newMaster.getCreatedOn().getTime());
 			    builds.setCreatedOn(tSqlDate);
 			    Buildings building = buildingRepo.save(builds);
-			    for(int i=1;i<8;i++)
+			    for(int i=0;i<7;i++)
 			    {
 					/*
 					 * System.out.println("hi");
@@ -440,7 +440,7 @@ Rooms room = roomRepo.save(newRoom);
 		public ResponseEntity<String> deletebed(@PathVariable int id) {
 
 			try {
-				if((bedrepo.getById(id).getGuestId()).equals(null))
+				if((bedrepo.getById(id).isBedStatus()==true))
 				{
 					bedrepo.deleteById(id);
 					return new ResponseEntity<String>("Deleted Successfully", HttpStatus.OK);
