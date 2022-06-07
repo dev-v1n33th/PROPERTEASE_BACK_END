@@ -2,11 +2,11 @@ package com.arshaa.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.arshaa.entity.SecurityDeposit;
+import com.arshaa.entity.Defaults;
 
-public interface SecurityDepositRepo extends  JpaRepository<SecurityDeposit, Integer> {
+public interface SecurityDepositRepo extends  JpaRepository<Defaults, Integer> {
 
 	boolean existsByOccupencyType(String occupencyType);
-	SecurityDeposit findByOccupencyType(String occupencyType);
+	Defaults findByOccupencyType(String occupencyType);
 
 }

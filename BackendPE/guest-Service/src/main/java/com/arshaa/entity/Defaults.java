@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.UniqueElements;
 @Entity
-public class SecurityDeposit {
+public class Defaults {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -45,14 +45,14 @@ public class SecurityDeposit {
 	public void setNoticeDays(int noticeDays) {
 		this.noticeDays = noticeDays;
 	}
-	public SecurityDeposit(int id, double securityDepositAmount, String occupencyType, int noticeDays) {
+	public Defaults(int id, double securityDepositAmount, String occupencyType, int noticeDays) {
 		super();
 		this.id = id;
 		this.securityDepositAmount = securityDepositAmount;
 		this.occupencyType = occupencyType;
 		this.noticeDays = noticeDays;
 	}
-	public SecurityDeposit() {
+	public Defaults() {
 		super();
 		// TODO Auto-generated constructor stub
 	}

@@ -6,9 +6,10 @@ import com.arshaa.dtos.GuestDto;
 
 import com.arshaa.entity.Guest;
 import com.arshaa.entity.GuestProfile;
-import com.arshaa.entity.SecurityDeposit;
+import com.arshaa.entity.Defaults;
 import com.arshaa.model.GuestImageDisplay;
 import com.arshaa.model.GuestsInNotice;
+import com.arshaa.model.PreviousGuests;
 import com.arshaa.model.Response;
 import com.arshaa.model.ResponseFile;
 import com.arshaa.model.ResponseMessage;
@@ -75,6 +76,12 @@ public class GuestController<E> {
 
     }
 
+
+    @PostMapping("/addPastGuest")
+       public Guest addPostGuest(@RequestBody PreviousGuests guest) {
+       	return service.addPostGuest(guest);
+       	
+       }
     @GetMapping("/getGuestByGuestId/{id}")
     public Guest getOneGuest(@PathVariable("id") String id) {
         return service.getGuestById(id);
@@ -313,17 +320,17 @@ public class GuestController<E> {
 	  
 	  // SecurityDeposit API's
 	  @PostMapping("/addSecurityDeposit")
-		public ResponseEntity<SecurityDeposit> addData(@RequestBody SecurityDeposit sdepo){
+		public ResponseEntity<Defaults> addData(@RequestBody Defaults sdepo){
 		  
 		  return securityDepositService.addData(sdepo);
 			
 		}
 	  @GetMapping("/getSecurityDeposit")
-		public ResponseEntity<List<SecurityDeposit>> getData(){
+		public ResponseEntity<List<Defaults>> getData(){
 			return securityDepositService.getData();
 		}
 	  @PutMapping("/updateSecurityDeposit/{id}")
-		public ResponseEntity  updateDataById(@PathVariable int id,@RequestBody SecurityDeposit sdepo) {
+		public ResponseEntity  updateDataById(@PathVariable int id,@RequestBody Defaults sdepo) {
 			return securityDepositService.updateDataById(id, sdepo);
 		}
 	  @DeleteMapping("deleteSecurityDeposit/{id}")

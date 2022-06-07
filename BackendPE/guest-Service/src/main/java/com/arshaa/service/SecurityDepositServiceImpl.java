@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.arshaa.entity.SecurityDeposit;
+import com.arshaa.entity.Defaults;
 import com.arshaa.repository.SecurityDepositRepo;
 
 @Service
@@ -19,9 +19,9 @@ public class SecurityDepositServiceImpl implements SecurityDepositService {
 	
 
 	@Override
-	public ResponseEntity<List<SecurityDeposit>> getData() {
+	public ResponseEntity<List<Defaults>> getData() {
 		try {
-			List<SecurityDeposit> securityadd = securityDepositRepo.findAll();
+			List<Defaults> securityadd = securityDepositRepo.findAll();
 			return new ResponseEntity<>(securityadd,HttpStatus.OK);
 			
 		}
@@ -32,9 +32,9 @@ public class SecurityDepositServiceImpl implements SecurityDepositService {
 	}
 
 	@Override
-	public ResponseEntity updateDataById(int id, SecurityDeposit sdepo) {
+	public ResponseEntity updateDataById(int id, Defaults sdepo) {
 		try {
-			SecurityDeposit s = securityDepositRepo.findById(sdepo.getId()).orElse(null);
+			Defaults s = securityDepositRepo.findById(sdepo.getId()).orElse(null);
 			 s.setSecurityDepositAmount(sdepo.getSecurityDepositAmount());
 			 securityDepositRepo.save(s);
 			 return new ResponseEntity(s,HttpStatus.OK);
@@ -48,8 +48,8 @@ public class SecurityDepositServiceImpl implements SecurityDepositService {
 	@Override
 	public ResponseEntity deleteDataById(int id) {
 		try {
-			SecurityDeposit depo=new SecurityDeposit();
-			SecurityDeposit sdepo = securityDepositRepo.findById(depo.getId()).orElse(null);
+			Defaults depo=new Defaults();
+			Defaults sdepo = securityDepositRepo.findById(depo.getId()).orElse(null);
 			securityDepositRepo.delete(sdepo);
 			return new ResponseEntity(sdepo,HttpStatus.OK);
 			
@@ -60,12 +60,12 @@ public class SecurityDepositServiceImpl implements SecurityDepositService {
 	}
 
 	@Override
-	public ResponseEntity<SecurityDeposit> addData(SecurityDeposit sdepo) {
+	public ResponseEntity<Defaults> addData(Defaults sdepo) {
 		
 		try {
 			if(securityDepositRepo.existsByOccupencyType(sdepo.getOccupencyType())==false)
 			{
-				SecurityDeposit securityadd = securityDepositRepo.save(sdepo);
+				Defaults securityadd = securityDepositRepo.save(sdepo);
 				return new ResponseEntity<>(securityadd,HttpStatus.OK);
 
 			}
@@ -83,7 +83,7 @@ public class SecurityDepositServiceImpl implements SecurityDepositService {
 	@Override
 	public ResponseEntity getSecurityDepositByOccupencyType(String occupencyType) {
 		try {
-			SecurityDeposit otype = securityDepositRepo.findByOccupencyType(occupencyType);
+			Defaults otype = securityDepositRepo.findByOccupencyType(occupencyType);
 			return new ResponseEntity<>(otype,HttpStatus.OK);
 		}
 		catch(Exception e) {
