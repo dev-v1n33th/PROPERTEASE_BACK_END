@@ -12,9 +12,11 @@ public class PreviousGuests {
 	private String firstName;
 	private String lastName;
 	private String email;
-	@JsonFormat(pattern = "dd-mm-yyyy")
+//	@JsonFormat(pattern = "dd-mm-yyyy")
+	@JsonFormat(pattern="yyyy-MM-dd")
 	private Date dateOfBirth;
-	@JsonFormat(pattern = "dd-mm-yyyy")
+//	@JsonFormat(pattern = "dd-mm-yyyy")
+	@JsonFormat(pattern="yyyy-MM-dd")
 	private Date checkInDate;
 	private String personalNumber;
 	private String secondaryPhoneNumber;
