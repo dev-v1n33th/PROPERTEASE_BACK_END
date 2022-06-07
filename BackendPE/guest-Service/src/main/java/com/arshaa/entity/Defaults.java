@@ -19,7 +19,7 @@ public class Defaults {
 	private String occupencyType;
 	
 	
-	@UniqueElements
+	//@UniqueElements
 	private int noticeDays;
 	public int getId() {
 		return id;
