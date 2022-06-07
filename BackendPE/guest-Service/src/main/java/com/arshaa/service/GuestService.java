@@ -5,6 +5,7 @@ import com.arshaa.common.Payment;
 import com.arshaa.dtos.GuestDto;
 import com.arshaa.entity.Guest;
 import com.arshaa.model.GuestsInNotice;
+import com.arshaa.model.PreviousGuests;
 import com.arshaa.model.VacatedGuests;
 import com.arshaa.repository.GuestRepository;
 
@@ -268,6 +269,116 @@ public class GuestService implements GuestInterface {
 		
 	}
 
+	@Override
+	public Guest addPostGuest(PreviousGuests guest) {
+		String bedUri = "http://bedService/bed/updateBedStatusBydBedId";
+		String payUri = "http://paymentService/payment/addPaymentAtOnBoarding";
+        Guest g=new Guest();
+        
+        java.sql.Date createDate = new java.sql.Date(guest.getCreatedOn().getTime());
+		g.setCreatedOn(createDate);
+		g.setAadharNumber(guest.getAadharNumber());
+		g.setAddressLine1(guest.getAddressLine1());
+		g.setAddressLine2(guest.getAddressLine2());
+		g.setAmountPaid(guest.getAmountPaid());
+		g.setAmountToBePaid(guest.getAmountToBePaid());
+		g.setBedId(guest.getBedId());
+		g.setBloodGroup(guest.getBloodGroup());
+		g.setBuildingId(guest.getBuildingId());
+		g.setCheckInDate(guest.getCheckInDate());
+		g.setCheckinNotes(guest.getCheckinNotes());
+		g.setCheckOutDate(guest.getCheckOutDate());
+		g.setCity(guest.getCity());
+		g.setCreatedBy(guest.getCreatedBy());
+		g.setCreatedOn(guest.getCreatedOn());
+		g.setDateOfBirth(guest.getDateOfBirth());
+		g.setDefaultRent(guest.getDefaultRent());
+		g.setDueAmount(guest.getDueAmount());
+		g.setDuration(guest.getDuration());
+		g.setEmail(guest.getEmail());
+		g.setFatherName(guest.getFatherName());
+		g.setFatherNumber(guest.getFatherNumber());
+		g.setFirstName(guest.getFirstName());
+		g.setGender(guest.getGender());
+		g.setGuestStatus(guest.getGuestStatus());
+		
+		g.setLastName(guest.getLastName());
+		g.setNoticeDate(guest.getNoticeDate());
+		g.setOccupancyType(guest.getOccupancyType());
+		g.setOccupation(guest.getOccupation());
+		g.setPaymentPurpose(guest.getPaymentPurpose());
+		g.setPersonalNumber(guest.getPersonalNumber());
+		g.setPincode(guest.getPincode());
+		g.setPlannedCheckOutDate(guest.getPlannedCheckOutDate());
+		g.setSecondaryPhoneNumber(guest.getSecondaryPhoneNumber());
+		g.setSecurityDeposit(guest.getSecurityDeposit());
+		g.setState(guest.getState());
+		g.setTransactionDate(guest.getTransactionDate());
+		g.setTransactionId(guest.getTransactionId());
+		g.setWorkAddressLine1(guest.getWorkAddressLine1());
+		g.setWorkAddressLine2(guest.getWorkAddressLine2());
+		g.setWorkPhone(guest.getWorkPhone());
+		repository.save(g);
+		
+
+		if (guest.getOccupancyType().equalsIgnoreCase("daily")) {
+			java.util.Date m = guest.getCheckInDate();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(m);
+			cal.add(Calendar.DATE, guest.getDuration());
+			m = cal.getTime();
+			System.out.println(m);
+			g.setPlannedCheckOutDate(m);
+			g.setGuestStatus("active");
+			repository.save(g);
+		} else if (guest.getOccupancyType().equalsIgnoreCase("monthly")) {
+			java.util.Date m = guest.getCheckInDate();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(m);
+			cal.add(Calendar.MONTH, guest.getDuration());
+			m = cal.getTime();
+			System.out.println(m);
+
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+			// System.out.println(dtf.format(m));
+
+			g.setPlannedCheckOutDate(m);
+			g.setGuestStatus("active");
+			repository.save(g);
+		} else {
+			g.setGuestStatus("active");
+
+			repository.save(g);
+		}
+
+//	        System.out.println(initialDefaultrent); 
+		guest.setGuestStatus("active");
+
+		repository.save(g);
+		System.out.println(guest.getDueAmount());
+		Bed bedReq = new Bed();
+		Payment payReq = new Payment();
+		// bed setting
+		bedReq.setBedId(g.getBedId());
+
+		bedReq.setGuestId(g.getId());
+		// bedReq.setDueAmount(guest.getDueAmount());
+		template.put(bedUri, bedReq, Bed.class);
+		// payment setting
+		payReq.setGuestId(g.getId());
+		payReq.setBuildingId(g.getBuildingId());
+		payReq.setTransactionId(g.getTransactionId());
+		payReq.setOccupancyType(g.getOccupancyType());
+		payReq.setTransactionDate(g.getTransactionDate());
+		// payReq.setCheckinDate(cSqlDate);
+		payReq.setAmountPaid(g.getAmountPaid());
+		// payReq.setDueAmount(guest.getDueAmount());
+		payReq.setPaymentPurpose(g.getPaymentPurpose());
+		repository.save(g);
+		Payment parRes = template.postForObject(payUri, payReq, Payment.class);
+		System.out.println(parRes);
+		return g;
+	}
 	
 
 

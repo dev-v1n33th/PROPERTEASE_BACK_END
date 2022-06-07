@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.arshaa.entity.SecurityDeposit;
+import com.arshaa.entity.Defaults;
 
 public interface SecurityDepositService {
 	
-	public ResponseEntity<SecurityDeposit> addData(SecurityDeposit sdepo);
-	public ResponseEntity<List<SecurityDeposit>> getData();
-	public ResponseEntity  updateDataById(int id,SecurityDeposit sdepo);
+	public ResponseEntity<Defaults> addData(Defaults sdepo);
+	public ResponseEntity<List<Defaults>> getData();
+	public ResponseEntity  updateDataById(int id,Defaults sdepo);
 	public ResponseEntity  deleteDataById(int id);
 	public ResponseEntity getSecurityDepositByOccupencyType(String occupencyType);
 	
