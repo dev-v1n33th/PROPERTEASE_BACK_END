@@ -178,6 +178,7 @@ public class PaymentImplement implements PaymentService {
 		th.setBedId(BedName);
 		String phone=template.getForObject("http://guestService/guest/getPhoneNumberByGuestId/"+ h.getGuestId(), String.class);
 		th.setPersonalNumber(phone);
+		th.setRefundAmount(h.getRefundAmount());
 		th.setPaymentPurpose(h.getPaymentPurpose());
 		th.setBuildingId(h.getBuildingId());
 		th.setTransactionId(h.getTransactionId());
