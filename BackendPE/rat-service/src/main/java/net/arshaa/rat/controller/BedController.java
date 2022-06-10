@@ -266,12 +266,13 @@ Rooms room = roomRepo.save(newRoom);
 		try {
 			java.sql.Date tSqlDate = new java.sql.Date(newBed.getCreatedOn().getTime());
 			newBed.setCreatedOn(tSqlDate);
-			boolean check=bedrepo.existsByBedId(newBed.getBedId());
-			if(check==true)
-			{
-				System.out.println(check);
-				return new ResponseEntity("BedId already exist", HttpStatus.OK);
-			}
+			System.out.println(newBed.getBedId());
+//			boolean check=bedrepo.existsByBedId(newBed.getBedId());
+//			if(check==true)
+//			{
+//				System.out.println(check);
+//				return new ResponseEntity("BedId already exist", HttpStatus.OK);
+//			}
 			//String roomNumber=roomRepo.getRoomNumberByRoomId(newBed.getRoomId());
 			/*
 			 * Floors floors=floorRepo.getFloorNumberByFloorId(newBed.getFloorId()); //
@@ -289,6 +290,7 @@ Rooms room = roomRepo.save(newRoom);
 			bed1.setBedName(newBed.getBedName());
 			bed1.setBedStatus(true);
 			bed1.setBuildingId(newBed.getBuildingId());
+			System.out.println(newBed.getBuildingId());
 			bed1.setDefaultRent(newBed.getDefaultRent());
 			bed1.setRoomId(newBed.getRoomId());
 			bed1.setFloorId(newBed.getFloorId());
@@ -319,12 +321,7 @@ Rooms room = roomRepo.save(newRoom);
 			bed.setGuestId(bedDetails.getGuestId());
 			bed.setRoomId(bedDetails.getRoomId());
 			bed.setBuildingId(bedDetails.getBuildingId());
-			boolean check=bedrepo.existsByBedId(bedDetails.getBedId());
-			if(check==true)
-			{
-				System.out.println(check);
-				return new ResponseEntity("BedId already exist", HttpStatus.OK);
-			}
+			
 			Bed updatedBed = bedrepo.save(bed);
 			return new ResponseEntity("Bed Updated Successfully", HttpStatus.OK);
 		} catch (Exception e) {
@@ -789,7 +786,7 @@ Rooms room = roomRepo.save(newRoom);
 		Bed getBed = bedrepo.findByBedId(bed.getBedId());
 		getBed.setGuestId(bed.getGuestId());
 		getBed.setBedId(bed.getBedId());
-		getBed.setBedStatus(!getBed.isBedStatus());
+		getBed.setBedStatus(false);
 		bedrepo.save(getBed);
 	}
 
