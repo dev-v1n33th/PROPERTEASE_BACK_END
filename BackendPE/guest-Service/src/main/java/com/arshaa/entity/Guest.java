@@ -49,7 +49,7 @@ public class Guest implements Serializable {
     private String firstName;
     private String lastName;
     private String email;
-    @JsonFormat(pattern = "dd-mm-yyyy")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date dateOfBirth;
     private String personalNumber;
     private String secondaryPhoneNumber;
