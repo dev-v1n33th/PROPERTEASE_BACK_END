@@ -19,7 +19,17 @@ public class GuestsInNotice {
     private String occupancyType ;
     // private List<E> totalDueAmount;
     
-    public String getOccupancyType() {
+    @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss", timezone="IST")
+    private java.util.Date plannedCheckOutDate;
+
+    
+    public java.util.Date getPlannedCheckOutDate() {
+		return plannedCheckOutDate;
+	}
+	public void setPlannedCheckOutDate(java.util.Date plannedCheckOutDate) {
+		this.plannedCheckOutDate = plannedCheckOutDate;
+	}
+	public String getOccupancyType() {
 		return occupancyType;
 	}
 	public void setOccupancyType(String occupancyType) {

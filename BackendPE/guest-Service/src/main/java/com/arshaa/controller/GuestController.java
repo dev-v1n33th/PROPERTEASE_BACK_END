@@ -361,6 +361,7 @@ public class GuestController {
 				 g.getBuildingId(), String.class);
 				 gs.setBuildingName(name);
 				 gs.setOccupancyType(g.getOccupancyType());
+				 gs.setPlannedCheckOutDate(g.getPlannedCheckOutDate());
 
 				gs.setCheckOutDate(g.getCheckOutDate());
 				gs.setEmail(g.getEmail());
