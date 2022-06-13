@@ -31,6 +31,7 @@ import Models.FloorNameAndId;
 import Models.FloorsInfo;
 import Models.NewBuildModel;
 import Models.RoomsInfo;
+import Models.UpdateBedDto;
 import common.Guest;
 import common.GuestProfile;
 import common.Response;
@@ -307,22 +308,23 @@ Rooms room = roomRepo.save(newRoom);
 	}
 
 // APi to update bed by id
+	
+	//@Modifying
+	//@Query("update Customer u set u.phone = :phone where u.id = :id")
+	//void updatePhone(@Param(value = "id") long id, @Param(value = "phone") String phone);
 
 	@PutMapping("/updateBedById/{id}")
-	public ResponseEntity<Bed> updateBed(@PathVariable int id, @RequestBody Bed bedDetails) {
+	public ResponseEntity<Bed> updateBed(@PathVariable int id, @RequestBody UpdateBedDto bedDetails) {
 		try {
 			Bed bed = bedrepo.getById(id);
 
 			bed.setAc(bedDetails.isAc());
-			bed.setBedId(bedDetails.getBedId());
-			bed.setBedName(bedDetails.getBedName());
-			bed.setBedStatus(bedDetails.isBedStatus());
 			bed.setDefaultRent(bedDetails.getDefaultRent());
-			bed.setGuestId(bedDetails.getGuestId());
-			bed.setRoomId(bedDetails.getRoomId());
-			bed.setBuildingId(bedDetails.getBuildingId());
 			
 			Bed updatedBed = bedrepo.save(bed);
+			Rooms rooms=roomRepo.getRoomNumberByRoomId(bed.getRoomId());
+			bed.setBedId(bed.getId()+"-"+ rooms.getRoomNumber()+"-"+bed.getBedName()+"-"+(updatedBed.isAc()==true ? "AC":"NonAC"));
+			bedrepo.save(bed);
 			return new ResponseEntity("Bed Updated Successfully", HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity("Something went wrong can't able to update", HttpStatus.ALREADY_REPORTED);
@@ -630,6 +632,7 @@ Rooms room = roomRepo.save(newRoom);
 									//String guestStatus="active";
 									if(bed.isBedStatus()==false)
 									{
+										
 										Guest listOfGuests=template.getForObject("http://guestService/guest/getGuestByGuestId/" + newBed.getGuestId(),Guest.class);
 										//newBed.setGuest(listOfGuests);
 										newBed.setGuestName(listOfGuests.getFirstName());
@@ -768,7 +771,6 @@ Rooms room = roomRepo.save(newRoom);
 							newBed.setDefaultRent(bed.getDefaultRent());
 							newBed.setBuildingName(getBuilding.get().getBuildingName());
 							bedsList.add(newBed);
-
 						});
 					}
 					newBuild.setBeds(bedsList);
