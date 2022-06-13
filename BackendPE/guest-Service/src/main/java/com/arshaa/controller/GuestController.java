@@ -356,10 +356,11 @@ public class GuestController {
 			getList.forEach(g -> {
 				GuestsInNotice gs = new GuestsInNotice();
 				gs.setBedId(g.getBedId());
-				// String
-				// name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+
-				// g.getBuildingId(), String.class);
-				// gs.setBuildingName(name);
+				 String
+				 name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+
+				 g.getBuildingId(), String.class);
+				 gs.setBuildingName(name);
+				 gs.setOccupancyType(g.getOccupancyType());
 
 				gs.setCheckOutDate(g.getCheckOutDate());
 				gs.setEmail(g.getEmail());

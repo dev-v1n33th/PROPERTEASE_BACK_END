@@ -16,9 +16,16 @@ public class GuestsInNotice {
     private String personalNumber;
     private String email;
     private double dueAmount  ;
+    private String occupancyType ;
     // private List<E> totalDueAmount;
     
-    @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss", timezone="IST")
+    public String getOccupancyType() {
+		return occupancyType;
+	}
+	public void setOccupancyType(String occupancyType) {
+		this.occupancyType = occupancyType;
+	}
+	@JsonFormat(pattern="dd-MM-yyyy HH:mm:ss", timezone="IST")
 	//@Temporal(TemporalType.TIMESTAMP)
     private java.util.Date checkInDate = new java.util.Date(System.currentTimeMillis());
     @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss", timezone="IST")
