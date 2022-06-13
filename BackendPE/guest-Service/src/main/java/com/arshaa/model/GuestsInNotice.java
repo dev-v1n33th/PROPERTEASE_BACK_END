@@ -7,7 +7,7 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-public class GuestsInNotice<E> {
+public class GuestsInNotice {
 
     private String firstName;
     private String id;
@@ -15,7 +15,7 @@ public class GuestsInNotice<E> {
     private String bedId;
     private String personalNumber;
     private String email;
-    private List<E> dueAmount  ;
+    private double dueAmount  ;
     // private List<E> totalDueAmount;
     
     @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss", timezone="IST")
@@ -29,14 +29,20 @@ public class GuestsInNotice<E> {
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-	public List<E> getDueAmount() {
-		return dueAmount;
-	}
-	public void setDueAmount(List<E> dueAmount) {
-		this.dueAmount = dueAmount;
-	}
+//	public List<E> getDueAmount() {
+//		return dueAmount;
+//	}
+//	public void setDueAmount(List<E> dueAmount) {
+//		this.dueAmount = dueAmount;
+//	}
 	public String getId() {
 		return id;
+	}
+	public double getDueAmount() {
+		return dueAmount;
+	}
+	public void setDueAmount(double dueAmount) {
+		this.dueAmount = dueAmount;
 	}
 	public void setId(String id) {
 		this.id = id;
