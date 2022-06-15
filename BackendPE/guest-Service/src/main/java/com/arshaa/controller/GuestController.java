@@ -43,178 +43,172 @@ import javax.persistence.PersistenceContext;
 @RestController
 @RequestMapping("/guest")
 public class GuestController {
-	
-	 @Autowired
-		@PersistenceContext
-		private EntityManager em;
+
+	@Autowired
+	@PersistenceContext
+	private EntityManager em;
 
 	@Autowired(required = true)
-    private GuestRepository repository;
-	
-	 @Autowired
-	    @Lazy
-	    private RestTemplate template;
-	    
+	private GuestRepository repository;
 
-    @Autowired(required = true)
-    private GuestInterface service;
-    @Autowired
-    private GuestProfileService gpServe;
-    @Autowired
-    private SecurityDepositService securityDepositService;
-   // Guest Reports Sorted .
+	@Autowired
+	@Lazy
+	private RestTemplate template;
+
+	@Autowired(required = true)
+	private GuestInterface service;
+	@Autowired
+	private GuestProfileService gpServe;
+	@Autowired
+	private SecurityDepositService securityDepositService;
+
+	// Guest Reports Sorted .
 	@GetMapping("/getAllGuests/{field}")
 	public List<GuestDto> getAllGuests(@PathVariable String field) {
 		return service.getGuests(field);
 	}
 
+	@PostMapping("/addGuest")
+	public Guest saveGuest(@RequestBody Guest guest) {
 
-    @PostMapping("/addGuest")
-    public Guest saveGuest(@RequestBody Guest guest) {
+		return service.addGuest(guest);
 
-        return service.addGuest(guest);
+	}
 
-    }
+	@PostMapping("/addPastGuest")
+	public Guest addPostGuest(@RequestBody PreviousGuests guest) {
+		return service.addPostGuest(guest);
 
+	}
 
-    @PostMapping("/addPastGuest")
-       public Guest addPostGuest(@RequestBody PreviousGuests guest) {
-       	return service.addPostGuest(guest);
-       	
-       }
-    @GetMapping("/getGuestByGuestId/{id}")
-    public Guest getOneGuest(@PathVariable("id") String id) {
-        return service.getGuestById(id);
-    }
+	@GetMapping("/getGuestByGuestId/{id}")
+	public Guest getOneGuest(@PathVariable("id") String id) {
+		return service.getGuestById(id);
+	}
 
-    
-    
-    @DeleteMapping("/deleteGuestByGuestId/{id}")
-    public void delete(@PathVariable("id") String id) {
-        service.deleteGuest(id);
-    }
+	@DeleteMapping("/deleteGuestByGuestId/{id}")
+	public void delete(@PathVariable("id") String id) {
+		service.deleteGuest(id);
+	}
 
-    @PutMapping("/updateDueAmount")
-    public double updateDueAmount(@RequestBody Guest guest) {
-        return service.updateGuest(guest);
-    }
-  //http://localhost:7000/guest/findDueAmount/{guestId}
-   	//FETCHING DUE AMOUNT BASED ON GUESTID .
-   	@GetMapping("/findDueAmount/{guestId}")
-   	public List<Guest> getByGuestId(@PathVariable String guestId) {
-   		return service.getByGuestId(guestId);
+	@PutMapping("/updateDueAmount")
+	public double updateDueAmount(@RequestBody Guest guest) {
+		return service.updateGuest(guest);
+	}
 
-   	}
-     
-   	  //http://localhost:7000/guest/getDueAmountOnDashBoard.
-   	//FETCHING OverAllDUE AMOUNT. .
-   	@GetMapping("/getDueAmountOnDashBoard")
-   	public List<Guest> getTotalDue() {
-   		return service.getTotalDue();
+	// http://localhost:7000/guest/findDueAmount/{guestId}
+	// FETCHING DUE AMOUNT BASED ON GUESTID .
+	@GetMapping("/findDueAmount/{guestId}")
+	public List<Guest> getByGuestId(@PathVariable String guestId) {
+		return service.getByGuestId(guestId);
 
-   	}
+	}
 
-   	@GetMapping("/getGuestByBedId/{guestStatus}/{bedId}")
-   	public ResponseEntity<GuestModel> getGuestByBedIdAndGuestStatus(@PathVariable String guestStatus, String bedId)
-   	{
-   		GuestModel gm=new GuestModel();
-   		try {
-   			Guest guest=repository.getGuestBybedIdAndGuestStatus(bedId,guestStatus);
-   	   		if(guest.isGuestStatus().equalsIgnoreCase("active") ||guest.isGuestStatus().equalsIgnoreCase("inNotice") )
-   	   		{
-   	   			gm.setFirstName(guest.getFirstName());
-   	   			gm.setId(guest.getId());
-   	   			return new ResponseEntity(guest, HttpStatus.OK);
-   	   		}
-   				return new ResponseEntity("Guest is Inactive", HttpStatus.OK);
-   		}
-   		catch (Exception e) {
+	// http://localhost:7000/guest/getDueAmountOnDashBoard.
+	// FETCHING OverAllDUE AMOUNT. .
+	@GetMapping("/getDueAmountOnDashBoard")
+	public List<Guest> getTotalDue() {
+		return service.getTotalDue();
+
+	}
+
+	@GetMapping("/getGuestByBedId/{guestStatus}/{bedId}")
+	public ResponseEntity<GuestModel> getGuestByBedIdAndGuestStatus(@PathVariable String guestStatus, String bedId) {
+		GuestModel gm = new GuestModel();
+		try {
+			Guest guest = repository.getGuestBybedIdAndGuestStatus(bedId, guestStatus);
+			if (guest.isGuestStatus().equalsIgnoreCase("active")
+					|| guest.isGuestStatus().equalsIgnoreCase("inNotice")) {
+				gm.setFirstName(guest.getFirstName());
+				gm.setId(guest.getId());
+				return new ResponseEntity(guest, HttpStatus.OK);
+			}
+			return new ResponseEntity("Guest is Inactive", HttpStatus.OK);
+		} catch (Exception e) {
 			// TODO: handle exception
-				return new ResponseEntity(e.getMessage(), HttpStatus.OK);
+			return new ResponseEntity(e.getMessage(), HttpStatus.OK);
 
 		}
-   		   	}
-  
-   	@GetMapping("/getPendingAndCompletedById/{buildingId}")
-   	public List<Guest> getPendingByBuildingId(@PathVariable int buildingId) {
-   	return service.getPendingByBuildingId(buildingId);
-   	}
-   	
+	}
+
+	@GetMapping("/getPendingAndCompletedById/{buildingId}")
+	public List<Guest> getPendingByBuildingId(@PathVariable int buildingId) {
+		return service.getPendingByBuildingId(buildingId);
+	}
+
 //   	@GetMapping("/getFinalDueAmountForCheckout/{id}")
 //   	public List<Guest> getCheckOutAmountByGuestId(@PathVariable String id){
 //   	return service.getCheckOutAmountByGuestId(id);
 //   	}
-   	
-   	@GetMapping("/get/{id}")
-   	public List<Guest> getCheckOutDate(@PathVariable String id){
-   		return service.getCheckOutAmountByGuestId(id);
-   	}
-   	
-   	@GetMapping("/getFinalCheckout/{id}")
-	public List<Guest> finalCheckOutGuest(@PathVariable String id){
-   	return service.getFinalDueAmountById(id);
-   	}
-   	
-   	@GetMapping("/onClickDues/{id}")
-   	public List<Guest> getOnlyDues(@PathVariable String id){
-   		return service.getOnlyDues(id);
-   	}
-   	
 
-   	@GetMapping("/findGuestAreVacated/{guestStatus}")
-   	public List<VacatedGuests> findByGuestStatus(@PathVariable String guestStatus)
-   	{
+	@GetMapping("/get/{id}")
+	public List<Guest> getCheckOutDate(@PathVariable String id) {
+		return service.getCheckOutAmountByGuestId(id);
+	}
+
+	@GetMapping("/getFinalCheckout/{id}")
+	public List<Guest> finalCheckOutGuest(@PathVariable String id) {
+		return service.getFinalDueAmountById(id);
+	}
+
+	@GetMapping("/onClickDues/{id}")
+	public List<Guest> getOnlyDues(@PathVariable String id) {
+		return service.getOnlyDues(id);
+	}
+
+	@GetMapping("/findGuestAreVacated/{guestStatus}")
+	public List<VacatedGuests> findByGuestStatus(@PathVariable String guestStatus) {
 
 		return service.findByGuestStatus(guestStatus);
-   	}
-   	
-   	@GetMapping("/getTotalPaid/{id}")
-   	public List<Guest> getTotalPaidByGuestId(@PathVariable String id){
-   	return this.service.getTotalPaidByGuestId(id);
-   	}
-   	
-   	@SuppressWarnings({ "unchecked", "rawtypes" })
-   	@GetMapping("/getBedIdByGuestId/{id}")
-   	public ResponseEntity geeGuestBedByGuestId(@PathVariable String id) {
-   	Guest guest= repository.getBedIdById(id);
-   	return new ResponseEntity(guest.getBedId(),HttpStatus.OK);
-   	}
-   	
-   	
-   	@SuppressWarnings({ "unchecked", "rawtypes" })
-   	@GetMapping("/getPhoneNumberByGuestId/{id}")
-   	public ResponseEntity getPersonalNumberById(@PathVariable String id) {
-   	Guest guest = repository.getPersonalNumberById(id);
-   	return new ResponseEntity(guest.getPersonalNumber() , HttpStatus.OK);
-   	}
-   	
-   	@SuppressWarnings("unchecked")
-   	@GetMapping("/getNameByGuestId/{id}")
-   	public ResponseEntity getGuestNumberById(@PathVariable String id) {
-   	Guest guest = repository.getNameById(id);
-   	return new ResponseEntity(guest.getFirstName().concat(" ").concat(guest.getLastName()) ,HttpStatus.OK );
-   	}
-   	
+	}
+
+	@GetMapping("/getTotalPaid/{id}")
+	public List<Guest> getTotalPaidByGuestId(@PathVariable String id) {
+		return this.service.getTotalPaidByGuestId(id);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@GetMapping("/getBedIdByGuestId/{id}")
+	public ResponseEntity geeGuestBedByGuestId(@PathVariable String id) {
+		Guest guest = repository.getBedIdById(id);
+		return new ResponseEntity(guest.getBedId(), HttpStatus.OK);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@GetMapping("/getPhoneNumberByGuestId/{id}")
+	public ResponseEntity getPersonalNumberById(@PathVariable String id) {
+		Guest guest = repository.getPersonalNumberById(id);
+		return new ResponseEntity(guest.getPersonalNumber(), HttpStatus.OK);
+	}
+
+	@SuppressWarnings("unchecked")
+	@GetMapping("/getNameByGuestId/{id}")
+	public ResponseEntity getGuestNumberById(@PathVariable String id) {
+		Guest guest = repository.getNameById(id);
+		return new ResponseEntity(guest.getFirstName().concat(" ").concat(guest.getLastName()), HttpStatus.OK);
+	}
+
 //   	@GetMapping("/guestReport")
 //   	public List<Guest> getAllGuest(){
 //		return this.service.getAllGuest();   		   		
 //   		
 //   	}
-   	
-   //GuestProfile API's
 
-   	@PostMapping("/upload/{guestId}")
-	  public ResponseEntity<ResponseMessage> uploadFile(@PathVariable String guestId,@RequestParam("file") MultipartFile file) {
-	    String message = "";
-	    try {
-	    	gpServe.store(file,guestId);
-	      message = "Uploaded the file successfully: " + file.getOriginalFilename();
-	      return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
-	    } catch (Exception e) {
-	      message = "Can't able to upload file"+file.getOriginalFilename();
-	      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
-	    }
-	  }
+	// GuestProfile API's
+
+	@PostMapping("/upload/{guestId}")
+	public ResponseEntity<ResponseMessage> uploadFile(@PathVariable String guestId,
+			@RequestParam("file") MultipartFile file) {
+		String message = "";
+		try {
+			gpServe.store(file, guestId);
+			message = "Uploaded the file successfully: " + file.getOriginalFilename();
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+		} catch (Exception e) {
+			message = "Can't able to upload file" + file.getOriginalFilename();
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+		}
+	}
 //	  @GetMapping("/files")
 //	  public ResponseEntity<List<ResponseFile>> getListFiles() {
 //	    List<ResponseFile> files = gpServe.getAllFiles().map(dbFile -> {
@@ -232,8 +226,7 @@ public class GuestController {
 //	    }).collect(Collectors.toList());
 //	    return ResponseEntity.status(HttpStatus.OK).body(files);
 //	  }
-	  
-	  
+
 //	  @GetMapping("/files/{id}")
 //	  public ResponseEntity<byte[]> getFile(@PathVariable String id) {
 //		  UploadFile fileDB = storageService.getFile(id);
@@ -241,13 +234,13 @@ public class GuestController {
 //	        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
 //	        .body(fileDB.getData);
 //	  }
-	  
-	  @GetMapping("/files/{guestId}")
-	  public ResponseEntity<ResponseFile> getFilebyID(@PathVariable String guestId) {
-		  Response r=new Response();
 
-		  try {
-			  GuestProfile fileDB = gpServe.getFileByID(guestId);
+	@GetMapping("/files/{guestId}")
+	public ResponseEntity<ResponseFile> getFilebyID(@PathVariable String guestId) {
+		Response r = new Response();
+
+		try {
+			GuestProfile fileDB = gpServe.getFileByID(guestId);
 //			  String fileDownloadUri = ServletUriComponentsBuilder
 ////	          .fromCurrentContextPath()
 ////			          
@@ -255,59 +248,53 @@ public class GuestController {
 ////			          .path("/getImage/")
 ////			          .path(fileDB.getGuestId())
 ////			          .toUriString();
-			  ResponseFile file=new ResponseFile();
-			  file.setData(fileDB.getData());
-			 // file.setUrl("localhost:8989/guest/getImage/"+fileDB.getGuestId());
-			  file.setName(fileDB.getName());
-			  file.setType(fileDB.getType());
-			  file.setSize(fileDB.getData().length);
-			 // r.setData(file);
-		    return new ResponseEntity(file,HttpStatus.OK);
-  
-		  }
-		  catch(Exception e)
-		  {
-			  r.setData(null);			 
-			  return new ResponseEntity(r,HttpStatus.OK);
-		  }
-		  	  }
-	  
-	  
-	  
-	  @GetMapping("/getImage/{id}")
-	  public ResponseEntity<byte[]> getFile(@PathVariable String id) {
-		  Response r=new Response();
+			ResponseFile file = new ResponseFile();
+			file.setData(fileDB.getData());
+			// file.setUrl("localhost:8989/guest/getImage/"+fileDB.getGuestId());
+			file.setName(fileDB.getName());
+			file.setType(fileDB.getType());
+			file.setSize(fileDB.getData().length);
+			// r.setData(file);
+			return new ResponseEntity(file, HttpStatus.OK);
 
-		  try {
-			  GuestProfile fileDB = gpServe.getFileByID(id);
-			  
-			 // r.setData(fileDB.getData());
-			  //GuestImageDisplay image= new GuestImageDisplay();
-			  //image.setData(fileDB.getData());
-			    return ResponseEntity.ok()
-			        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
-			        .body(fileDB.getData());
-			  
-			//ResponseEntity url=  new ResponseEntity(fileDB.getData(),HttpStatus.OK);
-			//r.setData(url);
-			//StreamUtils.copy(fileDB.)
+		} catch (Exception e) {
+			r.setData(null);
+			return new ResponseEntity(r, HttpStatus.OK);
+		}
+	}
+
+	@GetMapping("/getImage/{id}")
+	public ResponseEntity<byte[]> getFile(@PathVariable String id) {
+		Response r = new Response();
+
+		try {
+			GuestProfile fileDB = gpServe.getFileByID(id);
+
+			// r.setData(fileDB.getData());
+			// GuestImageDisplay image= new GuestImageDisplay();
+			// image.setData(fileDB.getData());
+			return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getName() + "\"")
+					.body(fileDB.getData());
+
+			// ResponseEntity url= new ResponseEntity(fileDB.getData(),HttpStatus.OK);
+			// r.setData(url);
+			// StreamUtils.copy(fileDB.)
 //			  r.setData(fileDB);
 //			return new ResponseEntity(r,HttpStatus.OK);
-		  }
-		 catch(Exception e) {
-			   r.setData(null);
-			    return new ResponseEntity(r,HttpStatus.OK);
+		} catch (Exception e) {
+			r.setData(null);
+			return new ResponseEntity(r, HttpStatus.OK);
 
-		 }
-	  }
-	        
-	  
+		}
+	}
+
 //	private ResponseEntity<byte[]> ResponseEntity(byte[] bs, HttpStatus ok) {
 //		// TODO Auto-generated method stub
 //		return new ResponseEntity(bs,HttpStatus.OK);
 //	}
 //
-	  
+
 //	  @GetMapping("/filesData")
 //	    public ResponseEntity<String[]> getListofFiles() {
 //	    	UploadFile f=new UploadFile();
@@ -316,67 +303,82 @@ public class GuestController {
 //	        return new  ResponseEntity(f,HttpStatus.OK);
 //	  
 //	    }
-	  
-	  
-	  // SecurityDeposit API's
-	  @PostMapping("/addSecurityDeposit")
-		public ResponseEntity<Defaults> addData(@RequestBody Defaults sdepo){
-		  
-		  return securityDepositService.addData(sdepo);
-			
-		}
-	  @GetMapping("/getSecurityDeposit")
-		public ResponseEntity<List<Defaults>> getData(){
-			return securityDepositService.getData();
-		}
-	  @PutMapping("/updateSecurityDeposit/{id}")
-		public ResponseEntity  updateDataById(@PathVariable int id,@RequestBody Defaults sdepo) {
-			return securityDepositService.updateDataById(id, sdepo);
-		}
-	  @DeleteMapping("deleteSecurityDeposit/{id}")
-		public ResponseEntity  deleteDataById(@PathVariable int id) {
-		  return securityDepositService.deleteDataById(id);
-	  }
-	  
-	  //Get Security Deposit By Occupency Type API
-	  @GetMapping("/getSecurityDepositByOccupencyType/{occupencyType}")
-	  public ResponseEntity getSecurityDepositByOccupencyType(@PathVariable String occupencyType) {
-		  return securityDepositService.getSecurityDepositByOccupencyType(occupencyType);
-		  
-	  }
+
+	// SecurityDeposit API's
+	@PostMapping("/addSecurityDeposit")
+	public ResponseEntity<Defaults> addData(@RequestBody Defaults sdepo) {
+
+		return securityDepositService.addData(sdepo);
+
+	}
+
+	@GetMapping("/getSecurityDeposit")
+	public ResponseEntity<List<Defaults>> getData() {
+		return securityDepositService.getData();
+	}
+
+	@PutMapping("/updateSecurityDeposit/{id}")
+	public ResponseEntity updateDataById(@PathVariable int id, @RequestBody Defaults sdepo) {
+		return securityDepositService.updateDataById(id, sdepo);
+	}
+
+	@DeleteMapping("deleteSecurityDeposit/{id}")
+	public ResponseEntity deleteDataById(@PathVariable int id) {
+		return securityDepositService.deleteDataById(id);
+	}
+
+	// Get Security Deposit By Occupency Type API
+	@GetMapping("/getSecurityDepositByOccupencyType/{occupencyType}")
+	public ResponseEntity getSecurityDepositByOccupencyType(@PathVariable String occupencyType) {
+		return securityDepositService.getSecurityDepositByOccupencyType(occupencyType);
+
+	}
 
 	// Api for Showing guest About to check Out .
-	 
-		@GetMapping("/getGuestAboutToCheckOut/RegulatInNotice/Daily-Monthly-Active")
-		public List<GuestsInNotice> getAll() {
-			List<Guest> getList = repository.findByCheckOut();
-			List<GuestsInNotice> gin = new ArrayList<>();
 
-			// GuestsInNotice gs=new GuestsInNotice();
-			getList.forEach(g -> {
-				GuestsInNotice gs = new GuestsInNotice();
-				gs.setBedId(g.getBedId());
-				 String
-				 name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+
-				 g.getBuildingId(), String.class);
-				 gs.setBuildingName(name);
-				 gs.setOccupancyType(g.getOccupancyType());
-				 gs.setPlannedCheckOutDate(g.getPlannedCheckOutDate());
+	@GetMapping("/getGuestAboutToCheckOut/RegulatInNotice/Daily-Monthly-Active")
+	public List<GuestsInNotice> getAll() {
+		List<Guest> getList = repository.findByCheckOut();
+		List<GuestsInNotice> gin = new ArrayList<>();
 
-				gs.setCheckOutDate(g.getCheckOutDate());
-				gs.setEmail(g.getEmail());
-				gs.setBedId(g.getBedId());
-				gs.setFirstName(g.getFirstName().concat(" ".concat(g.getLastName())));
-				gs.setPersonalNumber(g.getPersonalNumber());
-				gs.setId(g.getId());
-				gin.add(gs);
-			});
+		// GuestsInNotice gs=new GuestsInNotice();
+		getList.forEach(g -> {
+			GuestsInNotice gs = new GuestsInNotice();
+			gs.setBedId(g.getBedId());
+			String name = template.getForObject(
+					"http://bedService/bed/getBuildingNameByBuildingId/" + g.getBuildingId(), String.class);
+			gs.setBuildingName(name);
+			gs.setOccupancyType(g.getOccupancyType());
+			gs.setPlannedCheckOutDate(g.getPlannedCheckOutDate());
 
-			return gin;
-		}  
+			gs.setCheckOutDate(g.getCheckOutDate());
+			gs.setEmail(g.getEmail());
+			gs.setBedId(g.getBedId());
+			gs.setFirstName(g.getFirstName().concat(" ".concat(g.getLastName())));
+			gs.setPersonalNumber(g.getPersonalNumber());
+			gs.setId(g.getId());
+			gin.add(gs);
+		});
 
+		return gin;
+	}
 
-		}
+//	@GetMapping("/getGuestData/{buildingId}")
+//	public ResponseEntity getGuestData(@PathVariable int buildingId) {
+//		return service.getGuestData(buildingId);
+//	}
+
+@GetMapping("/paymentRemainder/{buildingId}")
+public ResponseEntity paymentRemainder(@PathVariable int buildingId)
+{
+	return service.paymentRemainder(buildingId);
+}
+@GetMapping("/calculateDueAmount/{id}")
+public double calculateDueAmount(@PathVariable String id)
+{
+	return service.calculateDueAmount(id);
+}
+}
 //	@GetMapping("/getGuestAboutToCheckOut/RegulatInNotice/Daily-Monthly-Active/{id}")
 //	public List<GuestsInNotice> getAll(@PathVariable String id) {
 //		try
@@ -417,11 +419,3 @@ public class GuestController {
 //		}
 //		return null;
 //	}  
-	  
-
-	
-
-
-
-
-

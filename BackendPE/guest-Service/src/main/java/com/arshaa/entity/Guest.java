@@ -30,6 +30,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 }),
 @NamedStoredProcedureQuery(name= "onlyDues" , procedureName= "guest_due" , parameters = {
 @StoredProcedureParameter(mode = ParameterMode.IN , name = "GUEST__ID" , type= String.class )
+}),
+@NamedStoredProcedureQuery(name= "paymentsRemainder" , procedureName= "PAYMENTS_REMAINDER" , parameters = {
+@StoredProcedureParameter(mode = ParameterMode.IN , name = "building_id" , type= Integer.class )
 })
 
 })
@@ -418,6 +421,8 @@ public class Guest implements Serializable {
 	}
 	public void setDuration(int duration) {
 		this.duration = duration;
-	}	
+	}
+	
+
 
     }

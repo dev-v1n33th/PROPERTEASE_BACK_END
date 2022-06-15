@@ -12,6 +12,7 @@ import com.arshaa.model.VacatedGuests;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
 public interface GuestInterface {
@@ -45,4 +46,9 @@ public interface GuestInterface {
     
     public List<Guest> getTotalPaidByGuestId(String id);
     
+    public ResponseEntity getGuestData(int buildingId);
+	public double calculateDueAmount(String id);
+
+	public ResponseEntity paymentRemainder(int buildingId);
+
 }

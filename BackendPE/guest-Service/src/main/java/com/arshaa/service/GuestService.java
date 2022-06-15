@@ -1,10 +1,13 @@
 package com.arshaa.service;
 
 import com.arshaa.common.Bed;
+import com.arshaa.common.MailDto;
 import com.arshaa.common.Payment;
+import com.arshaa.common.PaymentRemainderData;
 import com.arshaa.dtos.GuestDto;
 import com.arshaa.entity.Guest;
 import com.arshaa.model.GuestsInNotice;
+import com.arshaa.model.PaymentRemainder;
 import com.arshaa.model.PreviousGuests;
 import com.arshaa.model.VacatedGuests;
 import com.arshaa.repository.GuestRepository;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,15 +28,22 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
+import javax.persistence.StoredProcedureQuery;
 
 @Service
 public class GuestService implements GuestInterface {
@@ -379,7 +390,186 @@ public class GuestService implements GuestInterface {
 		System.out.println(parRes);
 		return g;
 	}
+
+//	@Override
+//	public List<MailDto> getGuestData(int buildingId) {	
+//		List<Guest>  guest = repository.getByBuildingId(buildingId);
+//		List<MailDto> mt = new ArrayList<>();
+//		
+//		guest.forEach(g->{
+//			
+//			MailDto mm = new MailDto();
+//			mm.setEmail(g.getEmail());
+//			mm.setGuestId(g.getId());
+//	double d = template.getForObject("http://guestService/onClickDues/"+g.getBuildingId() , double.class);
+//	mm.setDueAmount(d);
+//	
+//		});
+//		
+//	}
+		
+
+//		StoredProcedureQuery query = em.createStoredProcedureQuery("PAYMENTS_REMAINDER"); 
+//		 query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
+//		// query.registerStoredProcedureParameter(2, Object.class, ParameterMode.OUT);
+//		 
+//		//Pass the parameter values
+//	        query.setParameter(1, buildingId);
+//	      
+//	        //Execute query
+//	        query.execute();
+//	        
+//	        //Get output parameters
+//	      List<Guest> ss=  query.getResultList();
+//	      //  Object outMessage = (Object) query.getOutputParameterValue(2);
+//		List<Guest> s=new ArrayList<>();
+//		Guest g2=new Guest();
+//	     Optional<List<Guest>> ss= Optional.of(em.createNamedStoredProcedureQuery("paymentsRemainder").setParameter("building_id" , buildingId).getResultList());
+////		ss.get().forEach(g->{
+////			g2.setId(g.getId());
+////			g2.setEmail(g.getEmail());
+////			g2.setDueAmount(g.getDueAmount());
+////			s.add(g2);
+////		});
+//	      return new ResponseEntity(ss,HttpStatus.OK);
+//	}
 	
 
+	public ResponseEntity paymentRemainder(int buildingId)
+	{
+		String url="http://emailService/mail/sendPaymentRemainder/";
+		List<PaymentRemainder> getList=new ArrayList();
+		List<Guest> getGuest=repository.getByBuildingId(buildingId);
+		  System.out.println("List:"+getGuest); 
+
+		if(!getGuest.isEmpty())
+		{
+			getGuest.forEach(g->{
+				String ss = g.getOccupancyType() ;
+			boolean s=	"Regular".contentEquals(ss);
+			System.out.println("s"  + s);
+				if(s==true)
+				{
+					PaymentRemainder pr=new PaymentRemainder(); 
+
+					double dueAmount=calculateDueAmount(g.getId());
+					System.out.println(dueAmount);
+					if((dueAmount)>0)
+							{
+						pr.setDueAmount(dueAmount);
+						pr.setEmail(g.getEmail());
+						pr.setGuestId(g.getId());
+						pr.setName(g.getFirstName());
+						PaymentRemainder parRes = template.postForObject(url, pr, PaymentRemainder.class);
+			 			getList.add(pr);
+
+					  System.out.println(getList); 
+							}
+
+				}
+			});
+			
+			return new ResponseEntity(getList,HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity("Nodue",HttpStatus.OK);
+		}
+	}
+	
+	public double calculateDueAmount(String id)
+	{
+		String url="http://paymentService/payment/getCountOfPaymentAmount/";
+	    double dueAmount=0;			
+		PaymentRemainderData data=template.getForObject(url+id,PaymentRemainderData.class);
+		double amountPaidCount=data.getTotalAmountPaid();
+		double refundAmountCount=data.getTotalRefundAmount();
+		
+		//getGuest detailes by guestid
+		Guest getGuest=repository.findById(id);
+		if(getGuest.getGuestStatus().equalsIgnoreCase("Active"))
+		{
+			//get current date
+			LocalDate now=LocalDate.now();
+			System.out.println("current"+now);
+
+			//convert checkin date type to util date to compare dates
+			java.util.Date s=getGuest.getCheckInDate();
+			System.out.println("date"+s);
+
+			LocalDate local = s.toInstant()
+	                  .atZone(ZoneId.systemDefault())
+	                  .toLocalDate();
+			
+			//compare 2 dates
+//			Period p=Period.between(now, local);
+//			System.out.println("period"+p);
+//			int diff=p.getDays();
+//			System.out.println("diff"+diff);
+			
+			double  c=(int) ChronoUnit.DAYS.between(local, now)+1;
+			System.out.println("c"+c);
+
+			if(c>30)
+			{
+				 double calcDays=Math.ceil(c/30);
+					System.out.println("calcDays"+calcDays);
+				 int round_up =  (int) calcDays ;
+				 
+					System.out.println("round_up  😁😁"+round_up);
+
+				 double countdueAmount=((round_up*getGuest.getDefaultRent()+getGuest.getSecurityDeposit()))-amountPaidCount+refundAmountCount;	
+				 double totalAmount =  Math.ceil(countdueAmount);
+				 dueAmount=totalAmount;
+				 return dueAmount;
+			}
+			else {
+				return dueAmount;
+			}
+		}
+		else if(getGuest.getGuestStatus().equalsIgnoreCase("inNotice")){
+			
+			java.util.Date s=getGuest.getCheckInDate();
+			java.util.Date m=getGuest.getPlannedCheckOutDate();
+			System.out.println("date"+s);
+			System.out.println("m"+m);
+
+
+			LocalDate checkIn = s.toInstant()
+	                  .atZone(ZoneId.systemDefault())
+	                  .toLocalDate();
+			System.out.println("checkIn"+checkIn);
+
+			LocalDate plannedCheckOut = m.toInstant()
+	                  .atZone(ZoneId.systemDefault())
+	                  .toLocalDate();
+			System.out.println("plannedCheckOut"+plannedCheckOut);
+
+			double  diff=(int) ChronoUnit.DAYS.between(checkIn, plannedCheckOut);
+			System.out.println("diff"+diff);		
+				 double perDayCharge=(getGuest.getDefaultRent()/30);
+					System.out.println("perDayCharge"+perDayCharge);
+				 //int round_up =  (int) calcDays ;
+				 
+					//System.out.println("round_up  😁😁"+round_up);
+
+				 double countdueAmount=((diff*perDayCharge))-amountPaidCount+refundAmountCount;	
+				 double totalAmount =  Math.round(countdueAmount);
+				 dueAmount=totalAmount;
+					System.out.println("dueAmount"+dueAmount);
+
+				 return dueAmount;
+			}
+		return dueAmount;
+
+		}
+		
+		
+
+
+	@Override
+	public ResponseEntity getGuestData(int buildingId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

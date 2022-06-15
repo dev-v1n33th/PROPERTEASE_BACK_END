@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -18,6 +19,9 @@ public interface GuestRepository extends JpaRepository<Guest, Integer> {
 	Guest getGuestBybedIdAndGuestStatus(String bedId, String guestStatus);
 
 	Optional<Guest> findByBuildingId(int buildingId);
+	
+	
+	List<Guest> getByBuildingId(int buildingId);
 
 	Optional<List<Guest>> findByBuildingIdAndGuestStatus(int buildingId, String guestStatus);
 
@@ -36,4 +40,6 @@ public interface GuestRepository extends JpaRepository<Guest, Integer> {
 	List<Guest> findByCheckOut();
 
 
+//	@Query(value = "CALL PAYMENTS_REMAINDER(:building_id);", nativeQuery = true)
+//	List<Guest> findGuestsByBuildingId(@Param("building_id") int buildingId);
 }

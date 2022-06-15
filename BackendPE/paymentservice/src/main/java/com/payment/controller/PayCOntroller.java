@@ -16,6 +16,7 @@ import com.payment.common.RecentTransactions;
 import com.payment.common.THistory;
 import com.payment.repos.PayRepos;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.payment.entity.Payments;
@@ -189,4 +190,8 @@ public class PayCOntroller {
 //		}
 
 
+		@GetMapping("/getCountOfPaymentAmount/{guestId}")
+		public ResponseEntity getCountOfPaymentAmount(@PathVariable String guestId) {
+           return serve.getCountOfPaymentAmount(guestId);
+		}
 }
