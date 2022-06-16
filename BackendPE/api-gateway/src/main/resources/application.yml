@@ -23,6 +23,11 @@ spring:
           uri: lb://loginService
           predicates:
             - Path=/login/**
+            
+        - id: emailService
+          uri: lb://emailService
+          predicates:
+            - Path=/mail/**    
 
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin

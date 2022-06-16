@@ -1,7 +1,7 @@
 package com.payment.service;
 
-
 import com.payment.common.Guest;
+import com.payment.common.PaymentRemainderData;
 import com.payment.common.THistory;
 
 import org.slf4j.Logger;
@@ -14,6 +14,8 @@ import javax.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.payment.entity.Payments;
@@ -36,8 +38,6 @@ public class PaymentImplement implements PaymentService {
 
 	Logger log = LoggerFactory.getLogger(PaymentImplement.class);
 
-	
-
 	// 2.METHOD TO FETCH PAYMENT DETAILS OF ONE PARTICULAR GUEST BY PAYMENTID .
 	@Override
 	public Payments getPaymentById(int paymentId) {
@@ -52,7 +52,7 @@ public class PaymentImplement implements PaymentService {
 		// TODO Auto-generated method stub
 		Payments pay = repo.findById(payment.getPaymentId()).orElse(null);
 		pay.setAmountPaid(payment.getAmountPaid());
-		//pay.setDueAmount(payment.getDueAmount());
+		// pay.setDueAmount(payment.getDueAmount());
 		return repo.save(pay);
 	}
 
@@ -69,14 +69,14 @@ public class PaymentImplement implements PaymentService {
 			firstPay.setAmountPaid(payment.getAmountPaid());
 			firstPay.setPaymentPurpose(payment.getPaymentPurpose());
 			firstPay.setBuildingId(payment.getBuildingId());
-		//	firstPay.setRefundAmount(payment.getRefundAmount());
-			//firstPay.setDueAmount(payment.getDueAmount());
+			// firstPay.setRefundAmount(payment.getRefundAmount());
+			// firstPay.setDueAmount(payment.getDueAmount());
 			java.sql.Date c = new java.sql.Date(payment.getCreatedOn().getTime());
 			payment.setCreatedOn(c);
 			firstPay.setCreatedBy(payment.getCreatedBy());
-			//firstPay.setCheckinDate(payment.getCheckinDate());
+			// firstPay.setCheckinDate(payment.getCheckinDate());
 			firstPay.setPaymentPurpose(payment.getPaymentPurpose());
-			
+
 			return repo.save(firstPay);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -99,8 +99,6 @@ public class PaymentImplement implements PaymentService {
 		return responsePay;
 	}
 
-	
-
 	// 7.POSTING THE DATA OF GUEST AFTER ONBOARDING .
 	@Override
 	public String addPaymentAfterOnBoard(Payments payment) {
@@ -108,10 +106,10 @@ public class PaymentImplement implements PaymentService {
 		Guest guest = new Guest();
 		Payments secondpay = new Payments();
 		try {
-			//Payments due = repo.findDueAmountByGuestId(payment.getGuestId());
+			// Payments due = repo.findDueAmountByGuestId(payment.getGuestId());
 			secondpay.setAmountPaid(payment.getAmountPaid());
 			secondpay.setBuildingId(payment.getBuildingId());
-			//secondpay.setDueAmount(due.getDueAmount() - payment.getAmountPaid());
+			// secondpay.setDueAmount(due.getDueAmount() - payment.getAmountPaid());
 			secondpay.setTransactionId(payment.getTransactionId());
 			secondpay.setPaymentPurpose(payment.getPaymentPurpose());
 			secondpay.setOccupancyType(payment.getOccupancyType());
@@ -120,12 +118,12 @@ public class PaymentImplement implements PaymentService {
 			payment.setTransactionDate(tSqlDate);
 			java.sql.Date c = new java.sql.Date(payment.getCreatedOn().getTime());
 			payment.setCreatedOn(c);
-		secondpay.setCreatedBy(payment.getCreatedBy());
+			secondpay.setCreatedBy(payment.getCreatedBy());
 			secondpay.setTransactionDate(payment.getTransactionDate());
 			secondpay.setRefundAmount(payment.getRefundAmount());
 			repo.save(secondpay);
 			guest.setId(secondpay.getGuestId());
-			//guest.setDueAmount(secondpay.getDueAmount());
+			// guest.setDueAmount(secondpay.getDueAmount());
 			// template.put(uri, guest, Guest.class);
 			return "successfull";
 		} catch (Exception e) {
@@ -134,8 +132,8 @@ public class PaymentImplement implements PaymentService {
 
 		}
 	}
-    
-	//GET ONLY PENDING PAYMENTS COUNTS .
+
+	// GET ONLY PENDING PAYMENTS COUNTS .
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Payments> getPaymentPending() {
@@ -143,7 +141,7 @@ public class PaymentImplement implements PaymentService {
 		return em.createNamedStoredProcedureQuery("secondProcedure").getResultList();
 	}
 
-	//GET TOTAL DUE AMOUNTS VALUE FOR ADMIN .
+	// GET TOTAL DUE AMOUNTS VALUE FOR ADMIN .
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Payments> getOverAllDues() {
@@ -154,7 +152,7 @@ public class PaymentImplement implements PaymentService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Payments> getBuildingwiseSummary() {
-		
+
 		return em.createNamedStoredProcedureQuery("summary").getResultList();
 	}
 
@@ -164,32 +162,52 @@ public class PaymentImplement implements PaymentService {
 		List<Payments> payment = repo.findAll();
 		List<THistory> thist = new ArrayList<>();
 
-		//GuestsInNotice gs=new GuestsInNotice();
-		payment.forEach(h->{
-		THistory th = new THistory ();
-		th.setAmountPaid(h.getAmountPaid());
-		th.setGuestId(h.getGuestId());
-		String name=template.getForObject("http://guestService/guest/getNameByGuestId/"+ h.getGuestId(), String.class);
-		th.setGuestName(name) ;
-		String buildingName=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+ h.getBuildingId(), String.class);
-		th.setBuildingName(buildingName);
+		// GuestsInNotice gs=new GuestsInNotice();
+		payment.forEach(h -> {
+			THistory th = new THistory();
+			th.setAmountPaid(h.getAmountPaid());
+			th.setGuestId(h.getGuestId());
+			String name = template.getForObject("http://guestService/guest/getNameByGuestId/" + h.getGuestId(),
+					String.class);
+			th.setGuestName(name);
+			String buildingName = template.getForObject(
+					"http://bedService/bed/getBuildingNameByBuildingId/" + h.getBuildingId(), String.class);
+			th.setBuildingName(buildingName);
 
-		String BedName=template.getForObject("http://guestService/guest/getBedIdByGuestId/"+ h.getGuestId(), String.class);
-		th.setBedId(BedName);
-		String phone=template.getForObject("http://guestService/guest/getPhoneNumberByGuestId/"+ h.getGuestId(), String.class);
-		th.setPersonalNumber(phone);
-		th.setRefundAmount(h.getRefundAmount());
-		th.setPaymentPurpose(h.getPaymentPurpose());
-		th.setBuildingId(h.getBuildingId());
-		th.setTransactionId(h.getTransactionId());
-		th.setId(h.getId());
+			String BedName = template.getForObject("http://guestService/guest/getBedIdByGuestId/" + h.getGuestId(),
+					String.class);
+			th.setBedId(BedName);
+			String phone = template.getForObject("http://guestService/guest/getPhoneNumberByGuestId/" + h.getGuestId(),
+					String.class);
+			th.setPersonalNumber(phone);
+			th.setRefundAmount(h.getRefundAmount());
+			th.setPaymentPurpose(h.getPaymentPurpose());
+			th.setBuildingId(h.getBuildingId());
+			th.setTransactionId(h.getTransactionId());
+			th.setId(h.getId());
 
-
-
-		th.setOccupancyType(h.getOccupancyType());
-		thist.add(th);
+			th.setOccupancyType(h.getOccupancyType());
+			thist.add(th);
 		});
-		return thist ;
+		return thist;
+	}
+
+	@Override
+	public ResponseEntity getCountOfPaymentAmount(String guestId) {
+		try {
+			long amountPaidCount = repo.getCountOfAmount(guestId);
+			long refundAmonutCount = repo.getCountOfRefundAmount(guestId);
+			PaymentRemainderData count = new PaymentRemainderData();
+			count.setTotalAmountPaid(amountPaidCount);
+			count.setTotalRefundAmount(refundAmonutCount);
+
+			return new ResponseEntity(count, HttpStatus.OK);
+		} catch (Exception e) {
+
+			return new ResponseEntity("something went wrong", HttpStatus.OK);
+
 		}
-	
+
+	}
+
 }

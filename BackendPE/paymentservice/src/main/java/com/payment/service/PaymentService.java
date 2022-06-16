@@ -2,6 +2,8 @@ package com.payment.service;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 import com.payment.common.THistory;
 
 //import static java.text.NumberFormat.getCurrencyInstance;
@@ -35,4 +37,6 @@ public interface PaymentService {
 	public List<Payments> getBuildingwiseSummary();
 
 	public List<THistory> getAllTransactions();
+	
+	public ResponseEntity getCountOfPaymentAmount(String guestId);
 }

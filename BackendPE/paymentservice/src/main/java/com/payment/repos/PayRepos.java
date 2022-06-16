@@ -3,6 +3,7 @@ package com.payment.repos;
 import com.payment.entity.Payments;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,6 +34,12 @@ public interface PayRepos extends JpaRepository<Payments, Integer> {
 
 	List<Payments> getDueAmountByGuestId(String guestId);
 	Optional<List<Payments>> findPaymentsByBuildingId(int buildingId) ;
+	
+	    @Query(value="SELECT SUM(amount_paid) FROM Payments u WHERE guest_id=:id",nativeQuery = true)
+	    long getCountOfAmount(@Param("id") String guestId);
+	    
+	    @Query(value="SELECT SUM(refund_amount) FROM Payments u WHERE guest_id=:id",nativeQuery = true)
+	    long getCountOfRefundAmount(@Param("id") String guestId);
 }
 
 
