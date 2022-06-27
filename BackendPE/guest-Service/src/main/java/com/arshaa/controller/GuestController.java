@@ -350,6 +350,7 @@ public class GuestController {
 			gs.setBuildingName(name);
 			gs.setOccupancyType(g.getOccupancyType());
 			gs.setPlannedCheckOutDate(g.getPlannedCheckOutDate());
+			gs.setCheckInDate(g.getCheckInDate());
 
 			gs.setCheckOutDate(g.getCheckOutDate());
 			gs.setEmail(g.getEmail());
@@ -377,6 +378,13 @@ public ResponseEntity paymentRemainder(@PathVariable int buildingId)
 public double calculateDueAmount(@PathVariable String id)
 {
 	return service.calculateDueAmount(id);
+}
+
+
+@GetMapping("/dueGuestsList/{buildingId}")
+public ResponseEntity dueGuestsList(@PathVariable int buildingId)
+{
+	return service.dueGuestsList(buildingId);
 }
 }
 //	@GetMapping("/getGuestAboutToCheckOut/RegulatInNotice/Daily-Monthly-Active/{id}")

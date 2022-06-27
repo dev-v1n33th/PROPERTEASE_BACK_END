@@ -50,5 +50,8 @@ public interface GuestInterface {
 	public double calculateDueAmount(String id);
 
 	public ResponseEntity paymentRemainder(int buildingId);
+	
+	public ResponseEntity dueGuestsList(int buildingId);
+
 
 }

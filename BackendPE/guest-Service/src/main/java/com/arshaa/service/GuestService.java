@@ -6,6 +6,7 @@ import com.arshaa.common.Payment;
 import com.arshaa.common.PaymentRemainderData;
 import com.arshaa.dtos.GuestDto;
 import com.arshaa.entity.Guest;
+import com.arshaa.model.DueGuestsList;
 import com.arshaa.model.GuestsInNotice;
 import com.arshaa.model.PaymentRemainder;
 import com.arshaa.model.PreviousGuests;
@@ -565,6 +566,102 @@ public class GuestService implements GuestInterface {
 		
 		
 
+	public ResponseEntity dueGuestsList(int buildingId)
+	{
+		//String url="http://emailService/mail/sendPaymentRemainder/";
+		List<DueGuestsList> getList=new ArrayList();
+		
+		if(buildingId==0)
+		{
+			List<Guest> getGuest=repository.findAll();
+			  System.out.println("List:"+getGuest); 
+
+			if(!getGuest.isEmpty())
+			{
+				getGuest.forEach(g->{
+					String ss = g.getOccupancyType() ;
+				boolean s=	"Regular".contentEquals(ss);
+				System.out.println("s"  + s);
+					if(s==true)
+					{
+						DueGuestsList pr=new DueGuestsList(); 
+
+						double dueAmount=calculateDueAmount(g.getId());
+						System.out.println(dueAmount);
+						if((dueAmount)>0)
+								{
+							pr.setDueAmount(dueAmount);
+							pr.setEmail(g.getEmail());
+							pr.setGuestId(g.getId());
+							pr.setGuestName(g.getFirstName()+g.getLastName());
+							pr.setPhoneNumber(g.getPersonalNumber());
+							pr.setBedId(g.getBedId());
+				            String name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+ g.getBuildingId(), String.class);
+
+							pr.setBuildingName(name);
+							
+							//PaymentRemainder parRes = template.postForObject(url, pr, PaymentRemainder.class);
+				 			getList.add(pr);
+
+						  System.out.println(getList); 
+								}
+
+					}
+				});
+				
+				return new ResponseEntity(getList,HttpStatus.OK);
+			}
+			else {
+				return new ResponseEntity(getList,HttpStatus.OK);
+			}
+		}
+		else {
+			List<Guest> getGuest=repository.getByBuildingId(buildingId);
+		  System.out.println("List:"+getGuest); 
+
+		if(!getGuest.isEmpty())
+		{
+			getGuest.forEach(g->{
+				String ss = g.getOccupancyType() ;
+			boolean s=	"Regular".contentEquals(ss);
+			System.out.println("s"  + s);
+				if(s==true)
+				{
+					DueGuestsList pr=new DueGuestsList(); 
+
+					double dueAmount=calculateDueAmount(g.getId());
+					System.out.println(dueAmount);
+					if((dueAmount)>0)
+							{
+						pr.setDueAmount(dueAmount);
+						pr.setEmail(g.getEmail());
+						pr.setGuestId(g.getId());
+						pr.setGuestName(g.getFirstName()+g.getLastName());
+						pr.setPhoneNumber(g.getPersonalNumber());
+						pr.setBedId(g.getBedId());
+			            String name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+ g.getBuildingId(), String.class);
+
+						pr.setBuildingName(name);
+						
+						//PaymentRemainder parRes = template.postForObject(url, pr, PaymentRemainder.class);
+			 			getList.add(pr);
+
+					  System.out.println(getList); 
+							}
+
+				}
+			});
+			
+			return new ResponseEntity(getList,HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity(getList,HttpStatus.OK);
+
+		}
+		}
+
+	}
+	
 
 	@Override
 	public ResponseEntity getGuestData(int buildingId) {
