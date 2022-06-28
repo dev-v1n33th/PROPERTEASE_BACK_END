@@ -13,7 +13,6 @@ import com.arshaa.model.PreviousGuests;
 import com.arshaa.model.VacatedGuests;
 import com.arshaa.repository.GuestRepository;
 
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -48,21 +47,21 @@ import javax.persistence.StoredProcedureQuery;
 
 @Service
 public class GuestService implements GuestInterface {
-    @Autowired(required = true)
-    private GuestRepository repository;
+	@Autowired(required = true)
+	private GuestRepository repository;
 
-    @Autowired
-    @Lazy
-    private RestTemplate template;
-    
-    @Autowired
-    private ModelMapper  modelMapper ;
-    
-    @Autowired
+	@Autowired
+	@Lazy
+	private RestTemplate template;
+
+	@Autowired
+	private ModelMapper modelMapper;
+
+	@Autowired
 	@PersistenceContext
 	private EntityManager em;
 
-   @Override
+	@Override
 	public List<GuestDto> getGuests(String field) {
 		List<Guest> getGuest = repository.findAll(Sort.by(Sort.Direction.DESC, field));
 		List<GuestDto> gdto = new ArrayList<>();
@@ -91,203 +90,198 @@ public class GuestService implements GuestInterface {
 		return gdto;
 	}
 
-    @Override
-    public Guest getGuestById(String guestId) {
-        return repository.findById(guestId);
-    }
+	@Override
+	public Guest getGuestById(String guestId) {
+		return repository.findById(guestId);
+	}
 
-    @Override
-    public Guest addGuest(Guest guest) {
-        //double initialDefaultrent = 0;
-        String bedUri = "http://bedService/bed/updateBedStatusBydBedId";
-        String payUri = "http://paymentService/payment/addPaymentAtOnBoarding";
- //     Bed getUniqueBed = template.getForObject("http://bedService/bed/getBedByBedId/" + guest.getBedId(), Bed.class);
+	@Override
+	public Guest addGuest(Guest guest) {
+		// double initialDefaultrent = 0;
+		String bedUri = "http://bedService/bed/updateBedStatusBydBedId";
+		String payUri = "http://paymentService/payment/addPaymentAtOnBoarding";
+		// Bed getUniqueBed =
+		// template.getForObject("http://bedService/bed/getBedByBedId/" +
+		// guest.getBedId(), Bed.class);
 //        if (getUniqueBed.getBedId().equalsIgnoreCase(guest.getBedId())) {
 //            System.out.println(getUniqueBed.getBedId());
 //            guest.setDueAmount(getUniqueBed.getDefaultRent() - guest.getAmountPaid());
 //        }
-       // SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        //System.out.println(formatter.format(tSqlDate));
-       
-        java.sql.Date tSqlDate = new java.sql.Date(guest.getTransactionDate().getTime());
-        
-        guest.setTransactionDate(tSqlDate);
-        
-        java.sql.Date cSqlDate = new java.sql.Date(guest.getCheckInDate().getTime());
-        
-       guest.setCheckInDate(cSqlDate);
-       java.sql.Date createDate =new java.sql.Date(guest.getCreatedOn().getTime());
-       guest.setCreatedOn(createDate);
-       
-        repository.save(guest);
-        
-        if(guest.getOccupancyType().equalsIgnoreCase("daily"))
-        {
-        	java.util.Date m = guest.getCheckInDate();
-            Calendar cal = Calendar.getInstance();  
-            cal.setTime(m);  
-            cal.add(Calendar.DATE, guest.getDuration()); 
-            m = cal.getTime();   
-            System.out.println(m);
-            guest.setPlannedCheckOutDate(m);
-            guest.setGuestStatus("active");            
-            repository.save(guest);
-        }
-        else if(guest.getOccupancyType().equalsIgnoreCase("monthly"))
-        {
-        	java.util.Date m = guest.getCheckInDate();
-            Calendar cal = Calendar.getInstance();  
-            cal.setTime(m);  
-            cal.add(Calendar.MONTH, guest.getDuration()); 
-            m = cal.getTime();   
-            System.out.println(m);
-            
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
-            //System.out.println(dtf.format(m));  
+		// SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		// System.out.println(formatter.format(tSqlDate));
 
-            guest.setPlannedCheckOutDate(m);
-            guest.setGuestStatus("active");            
-            repository.save(guest);
-        }        
-        else {
-            guest.setGuestStatus("active");            
+		java.sql.Date tSqlDate = new java.sql.Date(guest.getTransactionDate().getTime());
 
-            repository.save(guest);
-        }
+		guest.setTransactionDate(tSqlDate);
 
+		java.sql.Date cSqlDate = new java.sql.Date(guest.getCheckInDate().getTime());
+
+		guest.setCheckInDate(cSqlDate);
+		java.sql.Date createDate = new java.sql.Date(guest.getCreatedOn().getTime());
+		guest.setCreatedOn(createDate);
+
+		repository.save(guest);
+
+		if (guest.getOccupancyType().equalsIgnoreCase("daily")) {
+			java.util.Date m = guest.getCheckInDate();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(m);
+			cal.add(Calendar.DATE, guest.getDuration());
+			m = cal.getTime();
+			System.out.println(m);
+			guest.setPlannedCheckOutDate(m);
+			guest.setGuestStatus("active");
+			repository.save(guest);
+		} else if (guest.getOccupancyType().equalsIgnoreCase("monthly")) {
+			java.util.Date m = guest.getCheckInDate();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(m);
+			cal.add(Calendar.MONTH, guest.getDuration());
+			m = cal.getTime();
+			System.out.println(m);
+
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+			// System.out.println(dtf.format(m));
+
+			guest.setPlannedCheckOutDate(m);
+			guest.setGuestStatus("active");
+			repository.save(guest);
+		} else {
+			guest.setGuestStatus("active");
+
+			repository.save(guest);
+		}
 
 //        System.out.println(initialDefaultrent); 
-        guest.setGuestStatus("active");            
+		guest.setGuestStatus("active");
 
-        repository.save(guest);
-                System.out.println(guest.getDueAmount());
-        Bed bedReq = new Bed();
-        Payment payReq = new Payment();
-        //bed setting
-        bedReq.setBedId(guest.getBedId());
-        
-        bedReq.setGuestId(guest.getId());
-        //bedReq.setDueAmount(guest.getDueAmount());
-        template.put(bedUri, bedReq, Bed.class);
-        //payment setting
-        payReq.setGuestId(guest.getId());
-        payReq.setBuildingId(guest.getBuildingId());
-        payReq.setTransactionId(guest.getTransactionId());
-        payReq.setOccupancyType(guest.getOccupancyType());
-        payReq.setTransactionDate(tSqlDate);
-       // payReq.setCheckinDate(cSqlDate);
-        payReq.setAmountPaid(guest.getAmountPaid());
-       // payReq.setDueAmount(guest.getDueAmount());
-        payReq.setPaymentPurpose(guest.getPaymentPurpose());
-        repository.save(guest);
-        Payment parRes = template.postForObject(payUri, payReq, Payment.class);
-        System.out.println(parRes);
-                return guest;
-    }
+		repository.save(guest);
+		System.out.println(guest.getDueAmount());
+		Bed bedReq = new Bed();
+		Payment payReq = new Payment();
+		// bed setting
+		bedReq.setBedId(guest.getBedId());
 
-    @Override
-    public double updateGuest(Guest guest) {
-        Guest newGuest = repository.findById(guest.getId());
-        newGuest.setDueAmount(guest.getDueAmount());
-        repository.save(newGuest);
-        return newGuest.getDueAmount();
-    }
+		bedReq.setGuestId(guest.getId());
+		// bedReq.setDueAmount(guest.getDueAmount());
+		template.put(bedUri, bedReq, Bed.class);
+		// payment setting
+		payReq.setGuestId(guest.getId());
+		payReq.setBuildingId(guest.getBuildingId());
+		payReq.setTransactionId(guest.getTransactionId());
+		payReq.setOccupancyType(guest.getOccupancyType());
+		payReq.setTransactionDate(tSqlDate);
+		// payReq.setCheckinDate(cSqlDate);
+		payReq.setAmountPaid(guest.getAmountPaid());
+		// payReq.setDueAmount(guest.getDueAmount());
+		payReq.setPaymentPurpose(guest.getPaymentPurpose());
+		repository.save(guest);
+		Payment parRes = template.postForObject(payUri, payReq, Payment.class);
+		System.out.println(parRes);
+		return guest;
+	}
 
-    @Override
-    public void deleteGuest(String guestId) {
-        Guest deleteGuest = repository.findById(guestId);
-        repository.delete(deleteGuest);
-    }
-    
- // Method to fetch the dueamount by guestId .
- 	@SuppressWarnings("unchecked")
- 	@Override
- 	public List<Guest> getByGuestId(String guestId) {
- 		// TODO Auto-generated method stub
+	@Override
+	public double updateGuest(Guest guest) {
+		Guest newGuest = repository.findById(guest.getId());
+		newGuest.setDueAmount(guest.getDueAmount());
+		repository.save(newGuest);
+		return newGuest.getDueAmount();
+	}
 
- 		return em.createNamedStoredProcedureQuery("firstProcedure").setParameter("g_id", guestId).getResultList();
+	@Override
+	public void deleteGuest(String guestId) {
+		Guest deleteGuest = repository.findById(guestId);
+		repository.delete(deleteGuest);
+	}
 
- 	}
+	// Method to fetch the dueamount by guestId .
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Guest> getByGuestId(String guestId) {
+		// TODO Auto-generated method stub
 
-      //Method to fetch all the dueamount .
- 	@SuppressWarnings("unchecked")
- 	@Override
- 	public List<Guest> getTotalDue() {
+		return em.createNamedStoredProcedureQuery("firstProcedure").setParameter("g_id", guestId).getResultList();
 
- 		return em.createNamedStoredProcedureQuery("dueDashBoard").getResultList();
+	}
 
- 	}
+	// Method to fetch all the dueamount .
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Guest> getTotalDue() {
+
+		return em.createNamedStoredProcedureQuery("dueDashBoard").getResultList();
+
+	}
 
 	@Override
 	public List<Guest> getPendingByBuildingId(int buildingId) {
 		// TODO Auto-generated method stub
 		return em.createNamedStoredProcedureQuery("thirdProcedure").setParameter("b_id", buildingId).getResultList();
 
-
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Guest> getCheckOutAmountByGuestId(String id) {
-	// TODO Auto-generated method stub
-	return em.createNamedStoredProcedureQuery("checkOut").setParameter("GUEST__ID" , id).getResultList();
+		// TODO Auto-generated method stub
+		return em.createNamedStoredProcedureQuery("checkOut").setParameter("GUEST__ID", id).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Guest> getFinalDueAmountById(String id) {
 		// TODO Auto-generated method stub
-		return em.createNamedStoredProcedureQuery("finalDue").setParameter("guest__id" , id).getResultList();
+		return em.createNamedStoredProcedureQuery("finalDue").setParameter("guest__id", id).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Guest> getOnlyDues(String id) {
 		// TODO Auto-generated method stub
-		return em.createNamedStoredProcedureQuery("onlyDues").setParameter("GUEST__ID" , id).getResultList();
+		return  em.createNamedStoredProcedureQuery("onlyDues").setParameter("GUEST__ID", id).getResultList();
+		
+
 	}
 
-	
-
-	public List<VacatedGuests> findByGuestStatus(String guestStatus)
-   	{
+	public List<VacatedGuests> findByGuestStatus(String guestStatus) {
 
 		List<Guest> getList = repository.findByGuestStatus(guestStatus);
-		List<VacatedGuests> gin=new ArrayList<>();
-		
-		//GuestsInNotice gs=new GuestsInNotice();
-		getList.forEach(g->{
-			VacatedGuests gs=new VacatedGuests();
-            gs.setBedId(g.getBedId());
-            String name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+ g.getBuildingId(), String.class);
-            gs.setBuildingName(name);
-            
-            gs.setCheckOutDate(g.getCheckOutDate());
-            gs.setEmail(g.getEmail());
-            gs.setBedId(g.getBedId());
-            gs.setFirstName(g.getFirstName());
-            gs.setPersonalNumber(g.getPersonalNumber());
-            gs.setId(g.getId());
-            gin.add(gs);
+		List<VacatedGuests> gin = new ArrayList<>();
+
+		// GuestsInNotice gs=new GuestsInNotice();
+		getList.forEach(g -> {
+			VacatedGuests gs = new VacatedGuests();
+			gs.setBedId(g.getBedId());
+			String name = template.getForObject(
+					"http://bedService/bed/getBuildingNameByBuildingId/" + g.getBuildingId(), String.class);
+			gs.setBuildingName(name);
+
+			gs.setCheckOutDate(g.getCheckOutDate());
+			gs.setEmail(g.getEmail());
+			gs.setBedId(g.getBedId());
+			gs.setFirstName(g.getFirstName());
+			gs.setPersonalNumber(g.getPersonalNumber());
+			gs.setId(g.getId());
+			gin.add(gs);
 		});
 		return gin;
-   	}
+	}
 
 	@Override
 	public List<Guest> getTotalPaidByGuestId(String id) {
 		// TODO Auto-generated method stub
-		return em.createNamedStoredProcedureQuery("totalGuestAmount").setParameter("GUEST__ID" , id).getResultList();
-		
+		return em.createNamedStoredProcedureQuery("totalGuestAmount").setParameter("GUEST__ID", id).getResultList();
+
 	}
 
 	@Override
 	public Guest addPostGuest(PreviousGuests guest) {
 		String bedUri = "http://bedService/bed/updateBedStatusBydBedId";
 		String payUri = "http://paymentService/payment/addPaymentAtOnBoarding";
-        Guest g=new Guest();
-        
-        java.sql.Date createDate = new java.sql.Date(guest.getCreatedOn().getTime());
+		Guest g = new Guest();
+
+		java.sql.Date createDate = new java.sql.Date(guest.getCreatedOn().getTime());
 		g.setCreatedOn(createDate);
 		g.setAadharNumber(guest.getAadharNumber());
 		g.setAddressLine1(guest.getAddressLine1());
@@ -313,7 +307,7 @@ public class GuestService implements GuestInterface {
 		g.setFirstName(guest.getFirstName());
 		g.setGender(guest.getGender());
 		g.setGuestStatus(guest.getGuestStatus());
-		
+
 		g.setLastName(guest.getLastName());
 		g.setNoticeDate(guest.getNoticeDate());
 		g.setOccupancyType(guest.getOccupancyType());
@@ -325,13 +319,14 @@ public class GuestService implements GuestInterface {
 		g.setSecondaryPhoneNumber(guest.getSecondaryPhoneNumber());
 		g.setSecurityDeposit(guest.getSecurityDeposit());
 		g.setState(guest.getState());
+//		java.sql.Date tDate = new java.sql.Date(guest.getTransactionDate().getTime());
+//		g.setTransactionDate(tDate);
 		g.setTransactionDate(guest.getTransactionDate());
 		g.setTransactionId(guest.getTransactionId());
 		g.setWorkAddressLine1(guest.getWorkAddressLine1());
 		g.setWorkAddressLine2(guest.getWorkAddressLine2());
 		g.setWorkPhone(guest.getWorkPhone());
 		repository.save(g);
-		
 
 		if (guest.getOccupancyType().equalsIgnoreCase("daily")) {
 			java.util.Date m = guest.getCheckInDate();
@@ -408,7 +403,6 @@ public class GuestService implements GuestInterface {
 //		});
 //		
 //	}
-		
 
 //		StoredProcedureQuery query = em.createStoredProcedureQuery("PAYMENTS_REMAINDER"); 
 //		 query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
@@ -434,234 +428,210 @@ public class GuestService implements GuestInterface {
 ////		});
 //	      return new ResponseEntity(ss,HttpStatus.OK);
 //	}
-	
 
-	public ResponseEntity paymentRemainder(int buildingId)
-	{
-		String url="http://emailService/mail/sendPaymentRemainder/";
-		List<PaymentRemainder> getList=new ArrayList();
-		List<Guest> getGuest=repository.getByBuildingId(buildingId);
-		  System.out.println("List:"+getGuest); 
+	public ResponseEntity paymentRemainder(int buildingId) {
+		String url = "http://emailService/mail/sendPaymentRemainder/";
+		List<PaymentRemainder> getList = new ArrayList();
+		List<Guest> getGuest = repository.getByBuildingId(buildingId);
+		System.out.println("List:" + getGuest);
 
-		if(!getGuest.isEmpty())
-		{
-			getGuest.forEach(g->{
-				String ss = g.getOccupancyType() ;
-			boolean s=	"Regular".contentEquals(ss);
-			System.out.println("s"  + s);
-				if(s==true)
-				{
-					PaymentRemainder pr=new PaymentRemainder(); 
+		if (!getGuest.isEmpty()) {
+			getGuest.forEach(g -> {
+				String ss = g.getOccupancyType();
+				boolean s = "Regular".contentEquals(ss);
+				System.out.println("s" + s);
+				if (s == true) {
+					PaymentRemainder pr = new PaymentRemainder();
 
-					double dueAmount=calculateDueAmount(g.getId());
+					double dueAmount = calculateDueAmount(g.getId());
 					System.out.println(dueAmount);
-					if((dueAmount)>0)
-							{
+					if ((dueAmount) > 0) {
 						pr.setDueAmount(dueAmount);
 						pr.setEmail(g.getEmail());
 						pr.setGuestId(g.getId());
 						pr.setName(g.getFirstName());
 						PaymentRemainder parRes = template.postForObject(url, pr, PaymentRemainder.class);
-			 			getList.add(pr);
+						getList.add(pr);
 
-					  System.out.println(getList); 
-							}
+						System.out.println(getList);
+					}
 
 				}
 			});
-			
-			return new ResponseEntity(getList,HttpStatus.OK);
-		}
-		else {
-			return new ResponseEntity("Nodue",HttpStatus.OK);
+
+			return new ResponseEntity(getList, HttpStatus.OK);
+		} else {
+			return new ResponseEntity("Nodue", HttpStatus.OK);
 		}
 	}
-	
-	public double calculateDueAmount(String id)
-	{
-		String url="http://paymentService/payment/getCountOfPaymentAmount/";
-	    double dueAmount=0;			
-		PaymentRemainderData data=template.getForObject(url+id,PaymentRemainderData.class);
-		double amountPaidCount=data.getTotalAmountPaid();
-		double refundAmountCount=data.getTotalRefundAmount();
-		
-		//getGuest detailes by guestid
-		Guest getGuest=repository.findById(id);
-		if(getGuest.getGuestStatus().equalsIgnoreCase("Active"))
-		{
-			//get current date
-			LocalDate now=LocalDate.now();
-			System.out.println("current"+now);
 
-			//convert checkin date type to util date to compare dates
-			java.util.Date s=getGuest.getCheckInDate();
-			System.out.println("date"+s);
+	public double calculateDueAmount(String id) {
+		String url = "http://paymentService/payment/getCountOfPaymentAmount/";
+		double dueAmount = 0;
+		PaymentRemainderData data = template.getForObject(url + id, PaymentRemainderData.class);
+		double amountPaidCount = data.getTotalAmountPaid();
+		double refundAmountCount = data.getTotalRefundAmount();
 
-			LocalDate local = s.toInstant()
-	                  .atZone(ZoneId.systemDefault())
-	                  .toLocalDate();
-			
-			//compare 2 dates
+		// getGuest detailes by guestid
+		Guest getGuest = repository.findById(id);
+		if (getGuest.getGuestStatus().equalsIgnoreCase("Active")) {
+			// get current date
+			LocalDate now = LocalDate.now();
+			System.out.println("current" + now);
+
+			// convert checkin date type to util date to compare dates
+			java.util.Date s = getGuest.getCheckInDate();
+			System.out.println("date" + s);
+
+			LocalDate local = s.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+			// compare 2 dates
 //			Period p=Period.between(now, local);
 //			System.out.println("period"+p);
 //			int diff=p.getDays();
 //			System.out.println("diff"+diff);
-			
-			double  c=(int) ChronoUnit.DAYS.between(local, now)+1;
-			System.out.println("c"+c);
 
-			if(c>30)
-			{
-				 double calcDays=Math.ceil(c/30);
-					System.out.println("calcDays"+calcDays);
-				 int round_up =  (int) calcDays ;
-				 
-					System.out.println("round_up  😁😁"+round_up);
+			double c = (int) ChronoUnit.DAYS.between(local, now) + 1;
+			System.out.println("c" + c);
 
-				 double countdueAmount=((round_up*getGuest.getDefaultRent()+getGuest.getSecurityDeposit()))-amountPaidCount+refundAmountCount;	
-				 double totalAmount =  Math.ceil(countdueAmount);
-				 dueAmount=totalAmount;
-				 return dueAmount;
-			}
-			else {
+			if (c > 30) {
+				double calcDays = Math.ceil(c / 30);
+				System.out.println("calcDays" + calcDays);
+				int round_up = (int) calcDays;
+
+				System.out.println("round_up  😁😁" + round_up);
+
+				double countdueAmount = ((round_up * getGuest.getDefaultRent() + getGuest.getSecurityDeposit()))
+						- amountPaidCount + refundAmountCount;
+				double totalAmount = Math.ceil(countdueAmount);
+				dueAmount = totalAmount;
+				return dueAmount;
+			} else {
 				return dueAmount;
 			}
+		} else if (getGuest.getGuestStatus().equalsIgnoreCase("inNotice")) {
+
+			java.util.Date s = getGuest.getCheckInDate();
+			java.util.Date m = getGuest.getPlannedCheckOutDate();
+			System.out.println("date" + s);
+			System.out.println("m" + m);
+
+			LocalDate checkIn = s.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			System.out.println("checkIn" + checkIn);
+
+			LocalDate plannedCheckOut = m.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			System.out.println("plannedCheckOut" + plannedCheckOut);
+
+			double diff = (int) ChronoUnit.DAYS.between(checkIn, plannedCheckOut);
+			System.out.println("diff" + diff);
+			double perDayCharge = (getGuest.getDefaultRent() / 30);
+			System.out.println("perDayCharge" + perDayCharge);
+			// int round_up = (int) calcDays ;
+
+			// System.out.println("round_up 😁😁"+round_up);
+
+			double countdueAmount = ((diff * perDayCharge)) - amountPaidCount + refundAmountCount;
+			double totalAmount = Math.round(countdueAmount);
+			dueAmount = totalAmount;
+			System.out.println("dueAmount" + dueAmount);
+
+			return dueAmount;
 		}
-		else if(getGuest.getGuestStatus().equalsIgnoreCase("inNotice")){
-			
-			java.util.Date s=getGuest.getCheckInDate();
-			java.util.Date m=getGuest.getPlannedCheckOutDate();
-			System.out.println("date"+s);
-			System.out.println("m"+m);
-
-
-			LocalDate checkIn = s.toInstant()
-	                  .atZone(ZoneId.systemDefault())
-	                  .toLocalDate();
-			System.out.println("checkIn"+checkIn);
-
-			LocalDate plannedCheckOut = m.toInstant()
-	                  .atZone(ZoneId.systemDefault())
-	                  .toLocalDate();
-			System.out.println("plannedCheckOut"+plannedCheckOut);
-
-			double  diff=(int) ChronoUnit.DAYS.between(checkIn, plannedCheckOut);
-			System.out.println("diff"+diff);		
-				 double perDayCharge=(getGuest.getDefaultRent()/30);
-					System.out.println("perDayCharge"+perDayCharge);
-				 //int round_up =  (int) calcDays ;
-				 
-					//System.out.println("round_up  😁😁"+round_up);
-
-				 double countdueAmount=((diff*perDayCharge))-amountPaidCount+refundAmountCount;	
-				 double totalAmount =  Math.round(countdueAmount);
-				 dueAmount=totalAmount;
-					System.out.println("dueAmount"+dueAmount);
-
-				 return dueAmount;
-			}
 		return dueAmount;
 
-		}
-		
-		
+	}
 
-	public ResponseEntity dueGuestsList(int buildingId)
-	{
-		//String url="http://emailService/mail/sendPaymentRemainder/";
-		List<DueGuestsList> getList=new ArrayList();
-		
-		if(buildingId==0)
-		{
-			List<Guest> getGuest=repository.findAll();
-			  System.out.println("List:"+getGuest); 
+	public ResponseEntity duesGuestsList(int buildingId) {
 
-			if(!getGuest.isEmpty())
-			{
-				getGuest.forEach(g->{
-					String ss = g.getOccupancyType() ;
-				boolean s=	"Regular".contentEquals(ss);
-				System.out.println("s"  + s);
-					if(s==true)
-					{
-						DueGuestsList pr=new DueGuestsList(); 
+		// String url="http://emailService/mail/sendPaymentRemainder/";
+		List<DueGuestsList> getList = new ArrayList();
 
-						double dueAmount=calculateDueAmount(g.getId());
+		if (buildingId == 0) {
+			List<Guest> getGuest = repository.findAll();
+			System.out.println("List:" + getGuest);
+
+			if (!getGuest.isEmpty()) {
+				getGuest.forEach(g -> {
+					String ss = g.getOccupancyType();
+					boolean s = "Regular".contentEquals(ss);
+					System.out.println("s" + s);
+					if (s == true) {
+						DueGuestsList pr = new DueGuestsList();
+
+						double dueAmount = calculateDueAmount(g.getId());
 						System.out.println(dueAmount);
-						if((dueAmount)>0)
-								{
+						if ((dueAmount) > 0) {
 							pr.setDueAmount(dueAmount);
 							pr.setEmail(g.getEmail());
 							pr.setGuestId(g.getId());
-							pr.setGuestName(g.getFirstName()+g.getLastName());
+							pr.setGuestName(g.getFirstName() + g.getLastName());
 							pr.setPhoneNumber(g.getPersonalNumber());
 							pr.setBedId(g.getBedId());
-				            String name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+ g.getBuildingId(), String.class);
+							String name = template.getForObject(
+									"http://bedService/bed/getBuildingNameByBuildingId/" + g.getBuildingId(),
+									String.class);
 
 							pr.setBuildingName(name);
-							
-							//PaymentRemainder parRes = template.postForObject(url, pr, PaymentRemainder.class);
-				 			getList.add(pr);
 
-						  System.out.println(getList); 
-								}
+							// PaymentRemainder parRes = template.postForObject(url, pr,
+							// PaymentRemainder.class);
+							getList.add(pr);
+
+							System.out.println(getList);
+						}
 
 					}
 				});
-				
-				return new ResponseEntity(getList,HttpStatus.OK);
+
+				return new ResponseEntity(getList, HttpStatus.OK);
+			} else {
+				return new ResponseEntity(getList, HttpStatus.OK);
 			}
-			else {
-				return new ResponseEntity(getList,HttpStatus.OK);
+		} else {
+			List<Guest> getGuest = repository.getByBuildingId(buildingId);
+			System.out.println("List:" + getGuest);
+
+			if (!getGuest.isEmpty()) {
+				getGuest.forEach(g -> {
+					String ss = g.getOccupancyType();
+					boolean s = "Regular".contentEquals(ss);
+					System.out.println("s" + s);
+					if (s == true) {
+						DueGuestsList pr = new DueGuestsList();
+
+						double dueAmount = calculateDueAmount(g.getId());
+						System.out.println(dueAmount);
+						if ((dueAmount) > 0) {
+							pr.setDueAmount(dueAmount);
+							pr.setEmail(g.getEmail());
+							pr.setGuestId(g.getId());
+							pr.setGuestName(g.getFirstName() + g.getLastName());
+							pr.setPhoneNumber(g.getPersonalNumber());
+							pr.setBedId(g.getBedId());
+							String name = template.getForObject(
+									"http://bedService/bed/getBuildingNameByBuildingId/" + g.getBuildingId(),
+									String.class);
+
+							pr.setBuildingName(name);
+
+							// PaymentRemainder parRes = template.postForObject(url, pr,
+							// PaymentRemainder.class);
+							getList.add(pr);
+
+							System.out.println(getList);
+						}
+
+					}
+				});
+
+				return new ResponseEntity(getList, HttpStatus.OK);
+			} else {
+				return new ResponseEntity(getList, HttpStatus.OK);
+
 			}
-		}
-		else {
-			List<Guest> getGuest=repository.getByBuildingId(buildingId);
-		  System.out.println("List:"+getGuest); 
-
-		if(!getGuest.isEmpty())
-		{
-			getGuest.forEach(g->{
-				String ss = g.getOccupancyType() ;
-			boolean s=	"Regular".contentEquals(ss);
-			System.out.println("s"  + s);
-				if(s==true)
-				{
-					DueGuestsList pr=new DueGuestsList(); 
-
-					double dueAmount=calculateDueAmount(g.getId());
-					System.out.println(dueAmount);
-					if((dueAmount)>0)
-							{
-						pr.setDueAmount(dueAmount);
-						pr.setEmail(g.getEmail());
-						pr.setGuestId(g.getId());
-						pr.setGuestName(g.getFirstName()+g.getLastName());
-						pr.setPhoneNumber(g.getPersonalNumber());
-						pr.setBedId(g.getBedId());
-			            String name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+ g.getBuildingId(), String.class);
-
-						pr.setBuildingName(name);
-						
-						//PaymentRemainder parRes = template.postForObject(url, pr, PaymentRemainder.class);
-			 			getList.add(pr);
-
-					  System.out.println(getList); 
-							}
-
-				}
-			});
-			
-			return new ResponseEntity(getList,HttpStatus.OK);
-		}
-		else {
-			return new ResponseEntity(getList,HttpStatus.OK);
-
-		}
 		}
 
 	}
-	
 
 	@Override
 	public ResponseEntity getGuestData(int buildingId) {
