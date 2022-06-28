@@ -7,6 +7,7 @@ import com.arshaa.dtos.GuestDto;
 import com.arshaa.entity.Guest;
 import com.arshaa.entity.GuestProfile;
 import com.arshaa.entity.Defaults;
+import com.arshaa.model.DueGuestsList;
 import com.arshaa.model.GuestImageDisplay;
 import com.arshaa.model.GuestsInNotice;
 import com.arshaa.model.PreviousGuests;
@@ -61,7 +62,8 @@ public class GuestController {
 	private GuestProfileService gpServe;
 	@Autowired
 	private SecurityDepositService securityDepositService;
-
+	
+	
 	// Guest Reports Sorted .
 	@GetMapping("/getAllGuests/{field}")
 	public List<GuestDto> getAllGuests(@PathVariable String field) {
@@ -351,7 +353,10 @@ public class GuestController {
 			gs.setOccupancyType(g.getOccupancyType());
 			gs.setPlannedCheckOutDate(g.getPlannedCheckOutDate());
 			gs.setCheckInDate(g.getCheckInDate());
-
+			
+//			double  due = template.getForObject("http://guestService/guest/onClickDues/"+g.getId(), double.class);
+//System.out.println(due);
+//gs.setDueAmount(due);
 			gs.setCheckOutDate(g.getCheckOutDate());
 			gs.setEmail(g.getEmail());
 			gs.setBedId(g.getBedId());
@@ -384,8 +389,19 @@ public double calculateDueAmount(@PathVariable String id)
 @GetMapping("/dueGuestsList/{buildingId}")
 public ResponseEntity dueGuestsList(@PathVariable int buildingId)
 {
-	return service.dueGuestsList(buildingId);
+	return service.duesGuestsList(buildingId);
 }
+
+//@GetMapping("/getdueAllbuildings")
+//public List<DueGuestsList> getDueForAll() {
+//	return  pservices.getAll();
+//}
+
+@GetMapping("/getGuestsAllbuildings")
+public List<Guest> getGuestsForAll() {
+	return  repository.findAll();
+}
+
 }
 //	@GetMapping("/getGuestAboutToCheckOut/RegulatInNotice/Daily-Monthly-Active/{id}")
 //	public List<GuestsInNotice> getAll(@PathVariable String id) {

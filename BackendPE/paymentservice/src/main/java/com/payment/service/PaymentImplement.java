@@ -2,6 +2,7 @@ package com.payment.service;
 
 import com.payment.common.Guest;
 import com.payment.common.PaymentRemainderData;
+import com.payment.common.Response;
 import com.payment.common.THistory;
 
 import org.slf4j.Logger;
@@ -114,8 +115,8 @@ public class PaymentImplement implements PaymentService {
 			secondpay.setPaymentPurpose(payment.getPaymentPurpose());
 			secondpay.setOccupancyType(payment.getOccupancyType());
 			secondpay.setGuestId(payment.getGuestId());
-			java.sql.Date tSqlDate = new java.sql.Date(payment.getTransactionDate().getTime());
-			payment.setTransactionDate(tSqlDate);
+//			java.sql.Date tSqlDate = new java.sql.Date(payment.getTransactionDate().getTime());
+//			payment.setTransactionDate(tSqlDate);
 			java.sql.Date c = new java.sql.Date(payment.getCreatedOn().getTime());
 			payment.setCreatedOn(c);
 			secondpay.setCreatedBy(payment.getCreatedBy());
@@ -194,6 +195,7 @@ public class PaymentImplement implements PaymentService {
 
 	@Override
 	public ResponseEntity getCountOfPaymentAmount(String guestId) {
+		Response response=new Response();	
 		try {
 			long amountPaidCount = repo.getCountOfAmount(guestId);
 			long refundAmonutCount = repo.getCountOfRefundAmount(guestId);
@@ -201,10 +203,14 @@ public class PaymentImplement implements PaymentService {
 			count.setTotalAmountPaid(amountPaidCount);
 			count.setTotalRefundAmount(refundAmonutCount);
 
+			
 			return new ResponseEntity(count, HttpStatus.OK);
 		} catch (Exception e) {
+response.setStatus(false);
+response.setMessage("something went wrong");
 
-			return new ResponseEntity("something went wrong", HttpStatus.OK);
+			
+			return new ResponseEntity(response, HttpStatus.OK);
 
 		}
 
