@@ -5,13 +5,16 @@ import com.arshaa.common.MailDto;
 import com.arshaa.common.Payment;
 import com.arshaa.common.PaymentRemainderData;
 import com.arshaa.dtos.GuestDto;
+import com.arshaa.dtos.RatedDto;
 import com.arshaa.entity.Guest;
+import com.arshaa.entity.RatesConfig;
 import com.arshaa.model.DueGuestsList;
 import com.arshaa.model.GuestsInNotice;
 import com.arshaa.model.PaymentRemainder;
 import com.arshaa.model.PreviousGuests;
 import com.arshaa.model.VacatedGuests;
 import com.arshaa.repository.GuestRepository;
+import com.arshaa.repository.RatesConfigRepository;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,9 @@ import javax.persistence.StoredProcedureQuery;
 public class GuestService implements GuestInterface {
 	@Autowired(required = true)
 	private GuestRepository repository;
+	
+	@Autowired
+	private RatesConfigRepository rconfig;
 
 	@Autowired
 	@Lazy
@@ -637,6 +643,22 @@ public class GuestService implements GuestInterface {
 	public ResponseEntity getGuestData(int buildingId) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<RatesConfig> getByBuildingId(int buildingId) {
+		// TODO Auto-generated method stub
+		return rconfig.findByBuildingId(buildingId);
+	}
+
+	@Override
+	public RatesConfig updateRoomRent(RatedDto Rdto, int id) {
+		// TODO Auto-generated method stub
+	RatesConfig r = rconfig.getById(id);
+	r.setAcPrice(Rdto.getAcPrice());
+	r.setNacPrice(Rdto.getNacPrice());
+	return rconfig.save(r);
+
 	}
 
 }

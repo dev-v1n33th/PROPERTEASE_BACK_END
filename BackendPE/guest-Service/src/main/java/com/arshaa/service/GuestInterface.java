@@ -2,7 +2,9 @@ package com.arshaa.service;
 
 import com.arshaa.common.Bed;
 import com.arshaa.dtos.GuestDto;
+import com.arshaa.dtos.RatedDto;
 import com.arshaa.entity.Guest;
+import com.arshaa.entity.RatesConfig;
 import com.arshaa.model.DueGuestsList;
 import com.arshaa.model.GuestsInNotice;
 import com.arshaa.model.PreviousGuests;
@@ -53,6 +55,9 @@ public interface GuestInterface {
 	public ResponseEntity paymentRemainder(int buildingId);
 	
 	public ResponseEntity duesGuestsList(int buildingId);
+	
+	public List<RatesConfig> getByBuildingId(int buildingId);
+	public RatesConfig updateRoomRent(RatedDto Rdto , int id);
 	
 	
 

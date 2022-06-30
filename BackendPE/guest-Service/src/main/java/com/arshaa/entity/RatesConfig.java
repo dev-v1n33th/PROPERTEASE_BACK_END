@@ -14,64 +14,98 @@ public class RatesConfig {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id ;
 	private int buildingId ;
-	private String buildingName ;
+	
 	private int sharing ;
 	private String occypancyType ;
-	private  String roomType ;
-	private double price ;
-	public double getPrice() {
-		return price;
-	}
-	public void setPrice(double price) {
-		this.price = price;
-	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public int getBuildingId() {
-		return buildingId;
-	}
-	public void setBuildingId(int buildingId) {
-		this.buildingId = buildingId;
-	}
-	public String getBuildingName() {
-		return buildingName;
-	}
-	public void setBuildingName(String buildingName) {
-		this.buildingName = buildingName;
-	}
-	public int getSharing() {
-		return sharing;
-	}
-	public void setSharing(int sharing) {
-		this.sharing = sharing;
-	}
-	public String getOccypancyType() {
-		return occypancyType;
-	}
-	public void setOccypancyType(String occypancyType) {
-		this.occypancyType = occypancyType;
-	}
-	public String getRoomType() {
-		return roomType;
-	}
-	public void setRoomType(String roomType) {
-		this.roomType = roomType;
-	}
-	public RatesConfig(int id, int buildingId, String buildingName, int sharing, String occypancyType,
-			String roomType , double price ) {
+	private  double acPrice ;
+	private double nacPrice ;
+	
+	
+	
+	public RatesConfig(int id, int buildingId, int sharing, String occypancyType, double acPrice, double nacPrice) {
 		super();
 		this.id = id;
 		this.buildingId = buildingId;
-		this.buildingName = buildingName;
 		this.sharing = sharing;
 		this.occypancyType = occypancyType;
-		this.roomType = roomType;
-		this.price = price ;
+		this.acPrice = acPrice;
+		this.nacPrice = nacPrice;
 	}
+
+
+
+	public int getId() {
+		return id;
+	}
+
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+
+
+	public int getBuildingId() {
+		return buildingId;
+	}
+
+
+
+	public void setBuildingId(int buildingId) {
+		this.buildingId = buildingId;
+	}
+
+
+
+	public int getSharing() {
+		return sharing;
+	}
+
+
+
+	public void setSharing(int sharing) {
+		this.sharing = sharing;
+	}
+
+
+
+	public String getOccypancyType() {
+		return occypancyType;
+	}
+
+
+
+	public void setOccypancyType(String occypancyType) {
+		this.occypancyType = occypancyType;
+	}
+
+
+
+	public double getAcPrice() {
+		return acPrice;
+	}
+
+
+
+	public void setAcPrice(double acPrice) {
+		this.acPrice = acPrice;
+	}
+
+
+
+	public double getNacPrice() {
+		return nacPrice;
+	}
+
+
+
+	public void setNacPrice(double nacPrice) {
+		this.nacPrice = nacPrice;
+	}
+
+
+
 	public RatesConfig() {
 		super();
 		// TODO Auto-generated constructor stub

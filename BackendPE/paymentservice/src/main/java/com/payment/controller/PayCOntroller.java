@@ -16,8 +16,10 @@ import com.payment.common.RecentTransactions;
 import com.payment.common.THistory;
 import com.payment.repos.PayRepos;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import com.payment.entity.Payments;
 import com.payment.service.PaymentService;
@@ -29,6 +31,10 @@ public class PayCOntroller {
 
 	@Autowired
 	private PaymentService serve;
+	
+	@Autowired
+	@Lazy
+	private RestTemplate template;	
 
 	@Autowired
 	private PayRepos repos;
@@ -91,6 +97,9 @@ public class PayCOntroller {
 					RecentTransactions rt = new RecentTransactions();
 					rt.setAmountPaid(payment.getAmountPaid());
 					rt.setGuestId(payment.getGuestId());
+					String name = template.getForObject("http://guestService/guest/getNameByGuestId/" + payment.getGuestId(),
+							String.class);
+					rt.setGuestName(name);
 					// rt.setPaymentId(payment.getPaymentId());
 					rt.setId(payment.getPaymentId());
 					rt.setPaymentPurpose(payment.getPaymentPurpose());
@@ -102,6 +111,8 @@ public class PayCOntroller {
 				});
 			}	}
 		return recent;   }
+	
+	
 	
 	
 	//API FOR GET RECENT TRANSACTION BASED ON BUILDING ID ;

@@ -12,12 +12,15 @@ public class RecentTransactions {
 	private Date transactionDate;
 	private String paymentPurpose;
 	private String guestId;
+	private String guestName;
 	private int buildingId ;
 
 	
+
 	public int getId() {
 		return id;
 	}
+
 
 
 	public void setId(int id) {
@@ -25,9 +28,11 @@ public class RecentTransactions {
 	}
 
 
+
 	public double getAmountPaid() {
 		return amountPaid;
 	}
+
 
 
 	public void setAmountPaid(double amountPaid) {
@@ -35,9 +40,11 @@ public class RecentTransactions {
 	}
 
 
+
 	public String getTransactionId() {
 		return transactionId;
 	}
+
 
 
 	public void setTransactionId(String transactionId) {
@@ -45,11 +52,11 @@ public class RecentTransactions {
 	}
 
 
-	
 
 	public Date getTransactionDate() {
 		return transactionDate;
 	}
+
 
 
 	public void setTransactionDate(Date transactionDate) {
@@ -57,9 +64,11 @@ public class RecentTransactions {
 	}
 
 
+
 	public String getPaymentPurpose() {
 		return paymentPurpose;
 	}
+
 
 
 	public void setPaymentPurpose(String paymentPurpose) {
@@ -67,9 +76,11 @@ public class RecentTransactions {
 	}
 
 
+
 	public String getGuestId() {
 		return guestId;
 	}
+
 
 
 	public void setGuestId(String guestId) {
@@ -77,27 +88,29 @@ public class RecentTransactions {
 	}
 
 
+
+	public String getGuestName() {
+		return guestName;
+	}
+
+
+
+	public void setGuestName(String guestName) {
+		this.guestName = guestName;
+	}
+
+
+
 	public int getBuildingId() {
 		return buildingId;
 	}
+
 
 
 	public void setBuildingId(int buildingId) {
 		this.buildingId = buildingId;
 	}
 
-
-	public RecentTransactions(int id, double amountPaid, String transactionId, Date transactionDate,
-			String paymentPurpose, String guestId, int buildingId) {
-		super();
-		this.id = id;
-		this.amountPaid = amountPaid;
-		this.transactionId = transactionId;
-		this.transactionDate = transactionDate;
-		this.paymentPurpose = paymentPurpose;
-		this.guestId = guestId;
-		this.buildingId = buildingId;
-	}
 
 
 	public RecentTransactions() {

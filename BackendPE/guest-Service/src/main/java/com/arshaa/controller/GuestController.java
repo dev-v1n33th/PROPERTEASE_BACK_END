@@ -3,9 +3,10 @@ package com.arshaa.controller;
 import com.arshaa.common.Bed;
 import com.arshaa.common.GuestModel;
 import com.arshaa.dtos.GuestDto;
-
+import com.arshaa.dtos.RatedDto;
 import com.arshaa.entity.Guest;
 import com.arshaa.entity.GuestProfile;
+import com.arshaa.entity.RatesConfig;
 import com.arshaa.entity.Defaults;
 import com.arshaa.model.DueGuestsList;
 import com.arshaa.model.GuestImageDisplay;
@@ -69,12 +70,22 @@ public class GuestController {
 	public List<GuestDto> getAllGuests(@PathVariable String field) {
 		return service.getGuests(field);
 	}
+	
+	@GetMapping("/getRatesByBuildingId/{buildingId}")
+	public List<RatesConfig> getByBuildingId(@PathVariable int buildingId){
+		return service.getByBuildingId(buildingId);
+	};
 
 	@PostMapping("/addGuest")
 	public Guest saveGuest(@RequestBody Guest guest) {
 
 		return service.addGuest(guest);
 
+	}
+	
+	@PutMapping("/updateRoomRent/{id}")
+	public RatesConfig updateRoomRents(@RequestBody RatedDto rdto , @PathVariable int id) {
+		return this.service.updateRoomRent(rdto, id);
 	}
 
 	@PostMapping("/addPastGuest")
