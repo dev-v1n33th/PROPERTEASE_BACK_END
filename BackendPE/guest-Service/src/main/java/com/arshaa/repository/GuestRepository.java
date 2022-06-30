@@ -39,6 +39,7 @@ public interface GuestRepository extends JpaRepository<Guest, Integer> {
 			+ "select * from guest where planned_check_out_date IS NOT NULL and guest_status ='Active' and occupancy_type IN ('Daily','Monthly'); ", nativeQuery = true)
 	List<Guest> findByCheckOut();
 
+	Guest getEmailById(String id);
 
 //	@Query(value = "CALL PAYMENTS_REMAINDER(:building_id);", nativeQuery = true)
 //	List<Guest> findGuestsByBuildingId(@Param("building_id") int buildingId);

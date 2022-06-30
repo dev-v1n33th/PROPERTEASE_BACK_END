@@ -4,6 +4,7 @@ import com.payment.common.Guest;
 import com.payment.common.PaymentRemainderData;
 import com.payment.common.Response;
 import com.payment.common.THistory;
+import com.payment.common.PaymentConfirmation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +105,8 @@ public class PaymentImplement implements PaymentService {
 	@Override
 	public String addPaymentAfterOnBoard(Payments payment) {
 		// String uri = "http://guestService/guest/updateDueAmount";
+		String eUri="http://emailService/mail/sendPaymentConfirmation/";
+
 		Guest guest = new Guest();
 		Payments secondpay = new Payments();
 		try {
@@ -122,6 +125,23 @@ public class PaymentImplement implements PaymentService {
 			secondpay.setCreatedBy(payment.getCreatedBy());
 			secondpay.setTransactionDate(payment.getTransactionDate());
 			secondpay.setRefundAmount(payment.getRefundAmount());
+			
+					
+			
+			PaymentConfirmation pc=new PaymentConfirmation();
+			
+			String name = template.getForObject("http://guestService/guest/getNameByGuestId/" + secondpay.getGuestId(),
+					String.class);
+			String email = template.getForObject("http://guestService/guest/getEmailByGuestId/" + secondpay.getGuestId(),
+					String.class);
+			
+			pc.setAmountPaid(payment.getAmountPaid());
+			// pc.setDate(tSqlDate);
+			pc.setEmail(email);
+			pc.setName(name);
+			pc.setTransactionId(payment.getTransactionId());
+			
+			PaymentConfirmation pcEmail=template.postForObject(eUri, pc, PaymentConfirmation.class);
 			repo.save(secondpay);
 			guest.setId(secondpay.getGuestId());
 			// guest.setDueAmount(secondpay.getDueAmount());
