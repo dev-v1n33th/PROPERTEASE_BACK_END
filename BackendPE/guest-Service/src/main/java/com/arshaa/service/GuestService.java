@@ -1,5 +1,11 @@
 package com.arshaa.service;
 
+
+import com.arshaa.common.CheckOutIntiated;
+import com.arshaa.common.FinalCheckOutConfimation;
+import com.arshaa.common.OnboardingConfirmation;
+import com.arshaa.model.EmailResponse;
+
 import com.arshaa.common.Bed;
 import com.arshaa.common.MailDto;
 import com.arshaa.common.Payment;
@@ -101,91 +107,105 @@ public class GuestService implements GuestInterface {
 		return repository.findById(guestId);
 	}
 
-	@Override
 	public Guest addGuest(Guest guest) {
-		// double initialDefaultrent = 0;
-		String bedUri = "http://bedService/bed/updateBedStatusBydBedId";
-		String payUri = "http://paymentService/payment/addPaymentAtOnBoarding";
-		// Bed getUniqueBed =
-		// template.getForObject("http://bedService/bed/getBedByBedId/" +
-		// guest.getBedId(), Bed.class);
+        //double initialDefaultrent = 0;
+        String bedUri = "http://bedService/bed/updateBedStatusBydBedId";
+        String payUri = "http://paymentService/payment/addPaymentAtOnBoarding";
+        String mailUri="http://emailService/mail/sendOnboardingConfirmation";
+ //     Bed getUniqueBed = template.getForObject("http://bedService/bed/getBedByBedId/" + guest.getBedId(), Bed.class);
 //        if (getUniqueBed.getBedId().equalsIgnoreCase(guest.getBedId())) {
 //            System.out.println(getUniqueBed.getBedId());
 //            guest.setDueAmount(getUniqueBed.getDefaultRent() - guest.getAmountPaid());
 //        }
-		// SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		// System.out.println(formatter.format(tSqlDate));
+       // SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        //System.out.println(formatter.format(tSqlDate));
+       
+        java.sql.Date tSqlDate = new java.sql.Date(guest.getTransactionDate().getTime());
+        
+        guest.setTransactionDate(tSqlDate);
+        
+        java.sql.Date cSqlDate = new java.sql.Date(guest.getCheckInDate().getTime());
+        
+       guest.setCheckInDate(cSqlDate);
+       java.sql.Date createDate =new java.sql.Date(guest.getCreatedOn().getTime());
+       guest.setCreatedOn(createDate);
+       
+        repository.save(guest);
+        
+        if(guest.getOccupancyType().equalsIgnoreCase("daily"))
+        {
+        	java.util.Date m = guest.getCheckInDate();
+            Calendar cal = Calendar.getInstance();  
+            cal.setTime(m);  
+            cal.add(Calendar.DATE, guest.getDuration()); 
+            m = cal.getTime();   
+            System.out.println(m);
+            guest.setPlannedCheckOutDate(m);
+            guest.setGuestStatus("Active");            
+            repository.save(guest);
+        }
+        else if(guest.getOccupancyType().equalsIgnoreCase("monthly"))
+        {
+        	java.util.Date m = guest.getCheckInDate();
+            Calendar cal = Calendar.getInstance();  
+            cal.setTime(m);  
+            cal.add(Calendar.MONTH, guest.getDuration()); 
+            m = cal.getTime();   
+            System.out.println(m);
+            
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+            //System.out.println(dtf.format(m));  
 
-		java.sql.Date tSqlDate = new java.sql.Date(guest.getTransactionDate().getTime());
+            guest.setPlannedCheckOutDate(m);
+            guest.setGuestStatus("Active");            
+            repository.save(guest);
+        }        
+        else {
+            guest.setGuestStatus("active");            
 
-		guest.setTransactionDate(tSqlDate);
+            repository.save(guest);
+        }
 
-		java.sql.Date cSqlDate = new java.sql.Date(guest.getCheckInDate().getTime());
-
-		guest.setCheckInDate(cSqlDate);
-		java.sql.Date createDate = new java.sql.Date(guest.getCreatedOn().getTime());
-		guest.setCreatedOn(createDate);
-
-		repository.save(guest);
-
-		if (guest.getOccupancyType().equalsIgnoreCase("daily")) {
-			java.util.Date m = guest.getCheckInDate();
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(m);
-			cal.add(Calendar.DATE, guest.getDuration());
-			m = cal.getTime();
-			System.out.println(m);
-			guest.setPlannedCheckOutDate(m);
-			guest.setGuestStatus("active");
-			repository.save(guest);
-		} else if (guest.getOccupancyType().equalsIgnoreCase("monthly")) {
-			java.util.Date m = guest.getCheckInDate();
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(m);
-			cal.add(Calendar.MONTH, guest.getDuration());
-			m = cal.getTime();
-			System.out.println(m);
-
-			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-			// System.out.println(dtf.format(m));
-
-			guest.setPlannedCheckOutDate(m);
-			guest.setGuestStatus("active");
-			repository.save(guest);
-		} else {
-			guest.setGuestStatus("active");
-
-			repository.save(guest);
-		}
 
 //        System.out.println(initialDefaultrent); 
-		guest.setGuestStatus("active");
+        guest.setGuestStatus("active");            
 
-		repository.save(guest);
-		System.out.println(guest.getDueAmount());
-		Bed bedReq = new Bed();
-		Payment payReq = new Payment();
-		// bed setting
-		bedReq.setBedId(guest.getBedId());
+        repository.save(guest);
+                System.out.println(guest.getDueAmount());
+        Bed bedReq = new Bed();
+        Payment payReq = new Payment();
+        //bed setting
+        bedReq.setBedId(guest.getBedId());
+        
+        bedReq.setGuestId(guest.getId());
+        //bedReq.setDueAmount(guest.getDueAmount());
+        template.put(bedUri, bedReq, Bed.class);
+        //payment setting
+        payReq.setGuestId(guest.getId());
+        payReq.setBuildingId(guest.getBuildingId());
+        payReq.setTransactionId(guest.getTransactionId());
+        payReq.setOccupancyType(guest.getOccupancyType());
+        payReq.setTransactionDate(tSqlDate);
+       // payReq.setCheckinDate(cSqlDate);
+        payReq.setAmountPaid(guest.getAmountPaid());
+       // payReq.setDueAmount(guest.getDueAmount());
+        payReq.setPaymentPurpose(guest.getPaymentPurpose());
+        repository.save(guest);
+        Payment parRes = template.postForObject(payUri, payReq, Payment.class);
+        System.out.println(parRes);
+        
+        OnboardingConfirmation mail=new OnboardingConfirmation();
+        mail.setName(guest.getFirstName()+guest.getLastName());
+        mail.setAmountPaid(guest.getAmountPaid());
+        String name=template.getForObject("http://bedService/bed/getBuildingNameByBuildingId/"+ guest.getBuildingId(), String.class);
+        mail.setBuildingName(name);
+        mail.setBedId(guest.getBedId());
+        mail.setEmail(guest.getEmail());
+        OnboardingConfirmation res = template.postForObject(mailUri, mail, OnboardingConfirmation.class);
 
-		bedReq.setGuestId(guest.getId());
-		// bedReq.setDueAmount(guest.getDueAmount());
-		template.put(bedUri, bedReq, Bed.class);
-		// payment setting
-		payReq.setGuestId(guest.getId());
-		payReq.setBuildingId(guest.getBuildingId());
-		payReq.setTransactionId(guest.getTransactionId());
-		payReq.setOccupancyType(guest.getOccupancyType());
-		payReq.setTransactionDate(tSqlDate);
-		// payReq.setCheckinDate(cSqlDate);
-		payReq.setAmountPaid(guest.getAmountPaid());
-		// payReq.setDueAmount(guest.getDueAmount());
-		payReq.setPaymentPurpose(guest.getPaymentPurpose());
-		repository.save(guest);
-		Payment parRes = template.postForObject(payUri, payReq, Payment.class);
-		System.out.println(parRes);
-		return guest;
-	}
+                return guest;
+    }
+
 
 	@Override
 	public double updateGuest(Guest guest) {
@@ -435,117 +455,137 @@ public class GuestService implements GuestInterface {
 //	      return new ResponseEntity(ss,HttpStatus.OK);
 //	}
 
-	public ResponseEntity paymentRemainder(int buildingId) {
-		String url = "http://emailService/mail/sendPaymentRemainder/";
-		List<PaymentRemainder> getList = new ArrayList();
-		List<Guest> getGuest = repository.getByBuildingId(buildingId);
-		System.out.println("List:" + getGuest);
+public ResponseEntity paymentRemainder(int buildingId)
+	{
+		String url="http://emailService/mail/sendPaymentRemainder/";
+		List<PaymentRemainder> getList=new ArrayList();
+		List<EmailResponse> getRes=new ArrayList<>();
+		List<Guest> getGuest=repository.getByBuildingId(buildingId);
+		  System.out.println("List:"+getGuest); 
 
-		if (!getGuest.isEmpty()) {
-			getGuest.forEach(g -> {
-				String ss = g.getOccupancyType();
-				boolean s = "Regular".contentEquals(ss);
-				System.out.println("s" + s);
-				if (s == true) {
-					PaymentRemainder pr = new PaymentRemainder();
+		if(!getGuest.isEmpty())
+		{
+			getGuest.forEach(g->{
+				String ss = g.getOccupancyType() ;
+			boolean s=	"Regular".contentEquals(ss);
+			System.out.println("s"  + s);
+				if(s==true)
+				{
+					PaymentRemainder pr=new PaymentRemainder(); 
 
-					double dueAmount = calculateDueAmount(g.getId());
+					double dueAmount=calculateDueAmount(g.getId());
 					System.out.println(dueAmount);
-					if ((dueAmount) > 0) {
+					if((dueAmount)>0)
+							{
 						pr.setDueAmount(dueAmount);
 						pr.setEmail(g.getEmail());
 						pr.setGuestId(g.getId());
 						pr.setName(g.getFirstName());
-						PaymentRemainder parRes = template.postForObject(url, pr, PaymentRemainder.class);
-						getList.add(pr);
-
-						System.out.println(getList);
-					}
+						EmailResponse parRes = template.postForObject(url, pr, EmailResponse.class);
+						EmailResponse er=new EmailResponse();
+						er.setStatus(parRes.isStatus()) ;
+						er.setMessage(parRes.getMessage());
+						
+			 			//getList.add(pr);
+						getRes.add(er);
+					  System.out.println(getList); 
+							}
 
 				}
 			});
-
-			return new ResponseEntity(getList, HttpStatus.OK);
-		} else {
-			return new ResponseEntity("Nodue", HttpStatus.OK);
+			
+			return new ResponseEntity(getRes,HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity("Nodue",HttpStatus.OK);
 		}
 	}
 
-	public double calculateDueAmount(String id) {
-		String url = "http://paymentService/payment/getCountOfPaymentAmount/";
-		double dueAmount = 0;
-		PaymentRemainderData data = template.getForObject(url + id, PaymentRemainderData.class);
-		double amountPaidCount = data.getTotalAmountPaid();
-		double refundAmountCount = data.getTotalRefundAmount();
+	public double calculateDueAmount(String id)
+	{
+		String url="http://paymentService/payment/getCountOfPaymentAmount/";
+	    double dueAmount=0;			
+		PaymentRemainderData data=template.getForObject(url+id,PaymentRemainderData.class);
+		double amountPaidCount=data.getTotalAmountPaid();
+		double refundAmountCount=data.getTotalRefundAmount();
+		
+		//getGuest detailes by guestid
+		Guest getGuest=repository.findById(id);
+		if(getGuest.getGuestStatus().equalsIgnoreCase("Active"))
+		{
+			//get current date
+			LocalDate now=LocalDate.now();
+			System.out.println("current"+now);
 
-		// getGuest detailes by guestid
-		Guest getGuest = repository.findById(id);
-		if (getGuest.getGuestStatus().equalsIgnoreCase("Active")) {
-			// get current date
-			LocalDate now = LocalDate.now();
-			System.out.println("current" + now);
+			//convert checkin date type to util date to compare dates
+			java.util.Date s=getGuest.getCheckInDate();
+			System.out.println("date"+s);
 
-			// convert checkin date type to util date to compare dates
-			java.util.Date s = getGuest.getCheckInDate();
-			System.out.println("date" + s);
-
-			LocalDate local = s.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-			// compare 2 dates
+			LocalDate local = s.toInstant()
+	                  .atZone(ZoneId.systemDefault())
+	                  .toLocalDate();
+			
+			//compare 2 dates
 //			Period p=Period.between(now, local);
 //			System.out.println("period"+p);
 //			int diff=p.getDays();
 //			System.out.println("diff"+diff);
+			
+			double  c=(int) ChronoUnit.DAYS.between(local, now)+1;
+			System.out.println("c"+c);
 
-			double c = (int) ChronoUnit.DAYS.between(local, now) + 1;
-			System.out.println("c" + c);
+			if(c>30)
+			{
+				 double calcDays=Math.ceil(c/30);
+					System.out.println("calcDays"+calcDays);
+				 int round_up =  (int) calcDays ;				 
+					System.out.println("round_up  😁😁"+round_up);
 
-			if (c > 30) {
-				double calcDays = Math.ceil(c / 30);
-				System.out.println("calcDays" + calcDays);
-				int round_up = (int) calcDays;
-
-				System.out.println("round_up  😁😁" + round_up);
-
-				double countdueAmount = ((round_up * getGuest.getDefaultRent() + getGuest.getSecurityDeposit()))
-						- amountPaidCount + refundAmountCount;
-				double totalAmount = Math.ceil(countdueAmount);
-				dueAmount = totalAmount;
-				return dueAmount;
-			} else {
+				 double countdueAmount=((round_up*getGuest.getDefaultRent()+getGuest.getSecurityDeposit()))-amountPaidCount+refundAmountCount;	
+				 double totalAmount =  Math.ceil(countdueAmount);
+				 dueAmount=totalAmount;
+				 return dueAmount;
+			}
+			else {
 				return dueAmount;
 			}
-		} else if (getGuest.getGuestStatus().equalsIgnoreCase("inNotice")) {
-
-			java.util.Date s = getGuest.getCheckInDate();
-			java.util.Date m = getGuest.getPlannedCheckOutDate();
-			System.out.println("date" + s);
-			System.out.println("m" + m);
-
-			LocalDate checkIn = s.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			System.out.println("checkIn" + checkIn);
-
-			LocalDate plannedCheckOut = m.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			System.out.println("plannedCheckOut" + plannedCheckOut);
-
-			double diff = (int) ChronoUnit.DAYS.between(checkIn, plannedCheckOut);
-			System.out.println("diff" + diff);
-			double perDayCharge = (getGuest.getDefaultRent() / 30);
-			System.out.println("perDayCharge" + perDayCharge);
-			// int round_up = (int) calcDays ;
-
-			// System.out.println("round_up 😁😁"+round_up);
-
-			double countdueAmount = ((diff * perDayCharge)) - amountPaidCount + refundAmountCount;
-			double totalAmount = Math.round(countdueAmount);
-			dueAmount = totalAmount;
-			System.out.println("dueAmount" + dueAmount);
-
-			return dueAmount;
 		}
+		else if(getGuest.getGuestStatus().equalsIgnoreCase("inNotice")){
+			
+			java.util.Date s=getGuest.getCheckInDate();
+			java.util.Date m=getGuest.getPlannedCheckOutDate();
+			System.out.println("date"+s);
+			System.out.println("m"+m);
+
+
+			LocalDate checkIn = s.toInstant()
+	                  .atZone(ZoneId.systemDefault())
+	                  .toLocalDate();
+			System.out.println("checkIn"+checkIn);
+
+			LocalDate plannedCheckOut = m.toInstant()
+	                  .atZone(ZoneId.systemDefault())
+	                  .toLocalDate();
+			System.out.println("plannedCheckOut"+plannedCheckOut);
+
+			double  diff=(int) ChronoUnit.DAYS.between(checkIn, plannedCheckOut);
+			System.out.println("diff"+diff);		
+				 double perDayCharge=(getGuest.getDefaultRent()/30);
+					System.out.println("perDayCharge"+perDayCharge);
+				 //int round_up =  (int) calcDays ;
+				 
+					//System.out.println("round_up  😁😁"+round_up);
+
+				 double countdueAmount=((diff*perDayCharge))-amountPaidCount+refundAmountCount;	
+				 double totalAmount =  Math.round(countdueAmount);
+				 dueAmount=totalAmount;
+					System.out.println("dueAmount"+dueAmount);
+
+				 return dueAmount;
+			}
 		return dueAmount;
 
-	}
+		}
 
 	public ResponseEntity duesGuestsList(int buildingId) {
 

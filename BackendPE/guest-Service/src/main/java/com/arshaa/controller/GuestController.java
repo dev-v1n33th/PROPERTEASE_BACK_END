@@ -63,7 +63,8 @@ public class GuestController {
 	private GuestProfileService gpServe;
 	@Autowired
 	private SecurityDepositService securityDepositService;
-	
+	@Autowired
+	private NotesService nServ;
 	
 	// Guest Reports Sorted .
 	@GetMapping("/getAllGuests/{field}")
@@ -413,6 +414,37 @@ public List<Guest> getGuestsForAll() {
 	return  repository.findAll();
 }
 
+//new changes
+
+@GetMapping("/getEmailByGuestId/{id}")
+public ResponseEntity getEmailById(@PathVariable String id) {
+	Guest guest = repository.getEmailById(id);
+	return new ResponseEntity(guest.getEmail(), HttpStatus.OK);
+}
+
+@GetMapping("/paymentRemainder/{buildingId}")
+public ResponseEntity paymentRemainder(@PathVariable int buildingId) {
+	return service.paymentRemainder(buildingId);
+}
+
+@GetMapping("/calculateDueAmount/{id}")
+public double calculateDueAmount(@PathVariable String id) {
+	return service.calculateDueAmount(id);
+}
+
+
+
+/*=================Notes Api's==============*/
+
+@PostMapping("/addNotes")
+public ResponseEntity addData(@RequestBody Notes notes) {
+   return 	nServ.addData(notes);
+}
+
+@GetMapping("/getNotesByGuestId/{guestId}")
+public ResponseEntity getNoteById(@PathVariable String guestId) {
+   return nServ.getNoteById(guestId);
+}
 }
 //	@GetMapping("/getGuestAboutToCheckOut/RegulatInNotice/Daily-Monthly-Active/{id}")
 //	public List<GuestsInNotice> getAll(@PathVariable String id) {
