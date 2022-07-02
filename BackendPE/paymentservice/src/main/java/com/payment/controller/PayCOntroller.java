@@ -9,9 +9,10 @@ import java.util.Optional;
 
 import javax.ws.rs.GET;
 
-import com.payment.common.DuePieChart;
+
 import com.payment.common.PaymentHistory;
 import com.payment.common.PendingPayments;
+import com.payment.common.PostPayments;
 import com.payment.common.RecentTransactions;
 import com.payment.common.THistory;
 import com.payment.repos.PayRepos;
@@ -71,7 +72,7 @@ public class PayCOntroller {
 
 	// POSTING INFORMATION OF PAYMENT BASED ON GUEST TYPE .
 	@PostMapping("/addAfterOnBoard")
-	public String addPaymentAfterOnBoar(@RequestBody Payments payment) {
+	public String addPaymentAfterOnBoar(@RequestBody PostPayments payment) {
 		return this.serve.addPaymentAfterOnBoard(payment);
 	}
 

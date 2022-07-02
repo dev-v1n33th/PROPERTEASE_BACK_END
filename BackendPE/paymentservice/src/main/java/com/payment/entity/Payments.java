@@ -27,9 +27,9 @@ public class Payments {
 	private double amountPaid;
 	private int buildingId ;
 	private String transactionId;
-  //  @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss", timezone="IST")
-	@JsonFormat(pattern="yyyy-MM-dd")
-	private Date transactionDate;
+	 @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss", timezone="IST")
+	    @Temporal(TemporalType.TIMESTAMP)
+	    private java.util.Date transactionDate = new java.util.Date(System.currentTimeMillis());
 	//private Date checkinDate;
 	private String paymentPurpose;
 	// private String occupancyType[] = { "Daily" , "Monthly" , "Regular" };

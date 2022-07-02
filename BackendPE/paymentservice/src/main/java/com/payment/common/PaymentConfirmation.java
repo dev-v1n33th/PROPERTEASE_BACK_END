@@ -23,7 +23,7 @@ public class PaymentConfirmation {
 	}
 
 	public void setName(String name) {
-		name = name;
+		this.name = name;
 	}
 
 	public double getAmountPaid() {

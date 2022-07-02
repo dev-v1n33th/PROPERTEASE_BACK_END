@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import com.payment.common.PostPayments;
 import com.payment.common.THistory;
 
 //import static java.text.NumberFormat.getCurrencyInstance;
@@ -26,7 +27,7 @@ public interface PaymentService {
 	public Payments addPayment(Payments payment);
 
     //7.POSTING THE DATA OF GUEST AFTER ONBOARDING .
-	public String addPaymentAfterOnBoard(Payments payment);
+	public String addPaymentAfterOnBoard(PostPayments payment);
 
 	// GET ONLY PENDING PAYMENTS COUNTS .
 	public List<Payments> getPaymentPending();

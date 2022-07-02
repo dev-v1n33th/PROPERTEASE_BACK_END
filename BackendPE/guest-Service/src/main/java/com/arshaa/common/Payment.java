@@ -47,6 +47,7 @@ public class Payment {
 		this.transactionId = transactionId;
 		this.transactionDate = transactionDate;
 		//this.checkinDate = checkinDate;
+		
 		this.paymentPurpose = paymentPurpose;
 		this.occupancyType = occupancyType;
 		this.refundAmount = refundAmount;

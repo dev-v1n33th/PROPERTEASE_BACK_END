@@ -6,6 +6,7 @@ import com.arshaa.dtos.GuestDto;
 import com.arshaa.dtos.RatedDto;
 import com.arshaa.entity.Guest;
 import com.arshaa.entity.GuestProfile;
+import com.arshaa.entity.Notes;
 import com.arshaa.entity.RatesConfig;
 import com.arshaa.entity.Defaults;
 import com.arshaa.model.DueGuestsList;
@@ -19,6 +20,7 @@ import com.arshaa.model.VacatedGuests;
 import com.arshaa.repository.GuestRepository;
 import com.arshaa.service.GuestInterface;
 import com.arshaa.service.GuestProfileService;
+import com.arshaa.service.NotesService;
 import com.arshaa.service.SecurityDepositService;
 import com.google.common.net.HttpHeaders;
 
@@ -76,6 +78,11 @@ public class GuestController {
 	public List<RatesConfig> getByBuildingId(@PathVariable int buildingId){
 		return service.getByBuildingId(buildingId);
 	};
+
+	@GetMapping("/getRatesByBuildingId/{buildingId}/{occupancyType}")
+	public List<RatesConfig> getByBuildingId(@PathVariable int buildingId, @PathVariable String occupancyType){
+		return service.findByBuildingIdAndOccupancyType(buildingId, occupancyType);
+	}
 
 	@PostMapping("/addGuest")
 	public Guest saveGuest(@RequestBody Guest guest) {
@@ -422,15 +429,17 @@ public ResponseEntity getEmailById(@PathVariable String id) {
 	return new ResponseEntity(guest.getEmail(), HttpStatus.OK);
 }
 
-@GetMapping("/paymentRemainder/{buildingId}")
-public ResponseEntity paymentRemainder(@PathVariable int buildingId) {
-	return service.paymentRemainder(buildingId);
-}
 
-@GetMapping("/calculateDueAmount/{id}")
-public double calculateDueAmount(@PathVariable String id) {
-	return service.calculateDueAmount(id);
-}
+//June 30 .
+//@GetMapping("/paymentRemainder/{buildingId}")
+//public ResponseEntity paymentRemainder(@PathVariable int buildingId) {
+//	return service.paymentRemainder(buildingId);
+//}
+//
+//@GetMapping("/calculateDueAmount/{id}")
+//public double calculateDueAmount(@PathVariable String id) {
+//	return service.calculateDueAmount(id);
+//}
 
 
 

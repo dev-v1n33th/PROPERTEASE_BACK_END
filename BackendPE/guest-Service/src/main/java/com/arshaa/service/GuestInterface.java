@@ -59,6 +59,8 @@ public interface GuestInterface {
 	public List<RatesConfig> getByBuildingId(int buildingId);
 	public RatesConfig updateRoomRent(RatedDto Rdto , int id);
 	
+	public List<RatesConfig> findByBuildingIdAndOccupancyType(int buildingId , String occupancyType);
+	
 	
 
 
