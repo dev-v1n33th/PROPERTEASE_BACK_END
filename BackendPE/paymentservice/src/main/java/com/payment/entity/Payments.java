@@ -2,6 +2,7 @@ package com.payment.entity;
 
 import javax.persistence.*;
 
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -26,6 +27,7 @@ public class Payments {
 	//private double dueAmount;
 	private double amountPaid;
 	private int buildingId ;
+	@UniqueElements
 	private String transactionId;
 	 @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss", timezone="IST")
 	    @Temporal(TemporalType.TIMESTAMP)

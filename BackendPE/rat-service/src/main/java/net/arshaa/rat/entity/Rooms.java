@@ -23,7 +23,15 @@ public class Rooms {
     private int floorId;
     @Column
     private int buildingId;
-    @Column
+    
+    private int sharing ;
+    public int getSharing() {
+		return sharing;
+	}
+	public void setSharing(int sharing) {
+		this.sharing = sharing;
+	}
+	@Column
     private String createdBy;   
     @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss", timezone="IST")
     @Temporal(TemporalType.DATE)
@@ -64,11 +72,12 @@ public class Rooms {
 	public void setCreatedOn(java.util.Date createdOn) {
 		this.createdOn = createdOn;
 	}
-	public Rooms(int roomId, String roomNumber, int floorId, int buildingId, String createdBy, Date createdOn) {
+	public Rooms(int roomId, String roomNumber, int floorId, int sharing ,int buildingId, String createdBy, Date createdOn) {
 		super();
 		this.roomId = roomId;
 		this.roomNumber = roomNumber;
 		this.floorId = floorId;
+		this.sharing=sharing ;
 		this.buildingId = buildingId;
 		this.createdBy = createdBy;
 		this.createdOn = createdOn;

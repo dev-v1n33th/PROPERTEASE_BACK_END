@@ -21,7 +21,9 @@ public class Floors {
     @Column
     private int buildingId;
     @Column
-    private String createdBy;   
+    private String createdBy; 
+    
+   
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Temporal(TemporalType.DATE)
     private java.util.Date createdOn= new java.util.Date(System.currentTimeMillis());
@@ -55,14 +57,16 @@ public class Floors {
 	public void setCreatedOn(java.util.Date createdOn) {
 		this.createdOn = createdOn;
 	}
-	public Floors(int floorId, String floorNumber, int buildingId, String createdBy, Date createdOn) {
+	public Floors(int floorId, String floorNumber ,int buildingId, String createdBy, Date createdOn) {
 		super();
 		this.floorId = floorId;
 		this.floorNumber = floorNumber;
 		this.buildingId = buildingId;
 		this.createdBy = createdBy;
 		this.createdOn = createdOn;
+	
 	}
+	
 	public Floors() {
 		super();
 		// TODO Auto-generated constructor stub

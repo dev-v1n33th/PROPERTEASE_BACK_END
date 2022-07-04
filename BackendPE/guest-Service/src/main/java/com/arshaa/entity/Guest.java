@@ -7,6 +7,7 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
@@ -62,6 +63,7 @@ public class Guest implements Serializable {
     private String occupation;
     private String occupancyType;
     private String gender;
+    private int sharing ;
     private String aadharNumber;
     private int buildingId;
     private String bedId;
@@ -75,6 +77,7 @@ public class Guest implements Serializable {
     private String workPhone;
     private String workAddressLine1;
     private String workAddressLine2;
+    @UniqueElements
     private String transactionId;
     private String paymentPurpose;
     private double amountToBePaid;
@@ -188,9 +191,10 @@ public class Guest implements Serializable {
 			String paymentPurpose, double amountToBePaid, double securityDeposit, String guestStatus, Date noticeDate,
 			double amountPaid, String checkinNotes, java.util.Date transactionDate, java.util.Date checkInDate,
 			 java.util.Date plannedCheckOutDate, java.util.Date checkOutDate, String createdBy, java.util.Date  createdOn,
-			double defaultRent) {
+			double defaultRent, int sharing) {
 		super();
 		this.id = id;
+		this.sharing= sharing ;
 		this.createdOn = createdOn;
 		this.createdBy = createdBy;
 		this.firstName = firstName;
@@ -233,6 +237,12 @@ public class Guest implements Serializable {
 		this.checkOutDate = checkOutDate;
 		this.defaultRent = defaultRent;
 	}
+		public int getSharing() {
+			return sharing;
+		}
+		public void setSharing(int sharing) {
+			this.sharing = sharing;
+		}
 		public void setEmail(String email) {
 		this.email = email;
 	}
