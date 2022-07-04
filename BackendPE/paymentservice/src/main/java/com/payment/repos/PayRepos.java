@@ -1,5 +1,6 @@
 package com.payment.repos;
 
+import com.payment.common.PostPayments;
 import com.payment.entity.Payments;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -40,6 +41,8 @@ public interface PayRepos extends JpaRepository<Payments, Integer> {
 	    
 	    @Query(value="SELECT SUM(refund_amount) FROM Payments u WHERE guest_id=:id",nativeQuery = true)
 	    long getCountOfRefundAmount(@Param("id") String guestId);
+
+		
 }
 
 

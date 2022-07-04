@@ -30,6 +30,7 @@ public class DueGuestsList {
 	public String getGuestId() {
 		return guestId;
 	}
+	
 	public void setGuestId(String guestId) {
 		this.guestId = guestId;
 	}
@@ -51,7 +52,4 @@ public class DueGuestsList {
 	public void setDueAmount(double dueAmount) {
 		this.dueAmount = dueAmount;
 	}
-	
-	
-	
 }

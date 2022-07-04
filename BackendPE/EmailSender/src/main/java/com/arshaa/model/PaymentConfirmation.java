@@ -1,16 +1,19 @@
-package com.arshaa.common;
+package com.arshaa.model;
 
-public class OnboardingConfirmation {
+import java.util.Date;
+
+public class PaymentConfirmation {
 
 	private String email;
 	private String name;
 	private double amountPaid;
-	private String bedId;
-	private String buildingName;
+	private String transactionId;
+	private Date date;
 
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
@@ -31,19 +34,20 @@ public class OnboardingConfirmation {
 		this.amountPaid = amountPaid;
 	}
 
-	public String getBedId() {
-		return bedId;
+	public String getTransactionId() {
+		return transactionId;
 	}
 
-	public void setBedId(String bedId) {
-		this.bedId = bedId;
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
 	}
 
-	public String getBuildingName() {
-		return buildingName;
+	public Date getDate() {
+		return date;
 	}
-	public void setBuildingName(String buildingName) {
-		this.buildingName = buildingName;
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 }

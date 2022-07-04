@@ -2,6 +2,7 @@ package com.payment.service;
 
 import com.payment.common.Guest;
 import com.payment.common.PaymentRemainderData;
+import com.payment.common.PostPayments;
 import com.payment.common.Response;
 import com.payment.common.THistory;
 import com.payment.common.PaymentConfirmation;
@@ -103,9 +104,9 @@ public class PaymentImplement implements PaymentService {
 
 	// 7.POSTING THE DATA OF GUEST AFTER ONBOARDING .
 	@Override
-	public String addPaymentAfterOnBoard(Payments payment) {
+	public String addPaymentAfterOnBoard(PostPayments payment) {
 		// String uri = "http://guestService/guest/updateDueAmount";
-		String eUri="http://emailService/mail/sendPaymentConfirmation/";
+		//String eUri="http://emailService/mail/sendPaymentConfirmation/";
 
 		Guest guest = new Guest();
 		Payments secondpay = new Payments();
@@ -122,8 +123,8 @@ public class PaymentImplement implements PaymentService {
 //			payment.setTransactionDate(tSqlDate);
 			java.sql.Date c = new java.sql.Date(payment.getCreatedOn().getTime());
 			payment.setCreatedOn(c);
-			secondpay.setCreatedBy(payment.getCreatedBy());
-			secondpay.setTransactionDate(payment.getTransactionDate());
+			
+			secondpay.setTransactionDate(secondpay.getTransactionDate());
 			secondpay.setRefundAmount(payment.getRefundAmount());
 			
 					
@@ -141,11 +142,11 @@ public class PaymentImplement implements PaymentService {
 			pc.setName(name);
 			pc.setTransactionId(payment.getTransactionId());
 			
-			PaymentConfirmation pcEmail=template.postForObject(eUri, pc, PaymentConfirmation.class);
-			repo.save(secondpay);
-			guest.setId(secondpay.getGuestId());
-			// guest.setDueAmount(secondpay.getDueAmount());
-			// template.put(uri, guest, Guest.class);
+//			PaymentConfirmation pcEmail=template.postForObject(eUri, pc, PaymentConfirmation.class);
+		repo.save(secondpay);
+//			guest.setId(secondpay.getGuestId());
+//			// guest.setDueAmount(secondpay.getDueAmount());
+//			// template.put(uri, guest, Guest.class);
 			return "successfull";
 		} catch (Exception e) {
 			e.printStackTrace();

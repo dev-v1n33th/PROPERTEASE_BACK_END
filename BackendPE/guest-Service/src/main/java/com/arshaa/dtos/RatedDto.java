@@ -2,25 +2,20 @@ package com.arshaa.dtos;
 
 public class RatedDto {
 	private int id;
-	private  double acPrice ;
-	private double nacPrice ;
+	private  double price ;
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
 	}
-	public double getAcPrice() {
-		return acPrice;
+	public double getPrice() {
+		return price;
 	}
-	public void setAcPrice(double acPrice) {
-		this.acPrice = acPrice;
+	public void setPrice(double price) {
+		this.price = price;
 	}
-	public double getNacPrice() {
-		return nacPrice;
-	}
-	public void setNacPrice(double nacPrice) {
-		this.nacPrice = nacPrice;
-	}
+	
+	
 
 }

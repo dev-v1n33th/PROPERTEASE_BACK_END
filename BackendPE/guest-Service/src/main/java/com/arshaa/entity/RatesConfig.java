@@ -15,101 +15,54 @@ public class RatesConfig {
 	private int id ;
 	private int buildingId ;
 	
-	private int sharing ;
-	private String occypancyType ;
-	private  double acPrice ;
-	private double nacPrice ;
-	
-	
-	
-	public RatesConfig(int id, int buildingId, int sharing, String occypancyType, double acPrice, double nacPrice) {
-		super();
-		this.id = id;
-		this.buildingId = buildingId;
-		this.sharing = sharing;
-		this.occypancyType = occypancyType;
-		this.acPrice = acPrice;
-		this.nacPrice = nacPrice;
-	}
-
-
-
+	private String sharing ;
+	private String roomType ;
+	private String occupancyType ;
+	private  double price ;
 	public int getId() {
 		return id;
 	}
-
-
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
-
-
 	public int getBuildingId() {
 		return buildingId;
 	}
-
-
-
 	public void setBuildingId(int buildingId) {
 		this.buildingId = buildingId;
 	}
-
-
-
-	public int getSharing() {
+	public String getSharing() {
 		return sharing;
 	}
-
-
-
-	public void setSharing(int sharing) {
+	public void setSharing(String sharing) {
 		this.sharing = sharing;
 	}
-
-
-
-	public String getOccypancyType() {
-		return occypancyType;
+	public String getRoomType() {
+		return roomType;
 	}
-
-
-
-	public void setOccypancyType(String occypancyType) {
-		this.occypancyType = occypancyType;
+	public void setRoomType(String roomType) {
+		this.roomType = roomType;
 	}
-
-
-
-	public double getAcPrice() {
-		return acPrice;
+	public String getOccupancyType() {
+		return occupancyType;
 	}
-
-
-
-	public void setAcPrice(double acPrice) {
-		this.acPrice = acPrice;
+	public void setOccupancyType(String occupancyType) {
+		this.occupancyType = occupancyType;
 	}
-
-
-
-	public double getNacPrice() {
-		return nacPrice;
+	public double getPrice() {
+		return price;
 	}
-
-
-
-	public void setNacPrice(double nacPrice) {
-		this.nacPrice = nacPrice;
+	public void setPrice(double price) {
+		this.price = price;
 	}
-
-
-
 	public RatesConfig() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+	
+
 	
 	
 	
