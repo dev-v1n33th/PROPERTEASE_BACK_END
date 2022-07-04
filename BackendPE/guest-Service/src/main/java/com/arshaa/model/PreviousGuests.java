@@ -5,6 +5,8 @@ import java.sql.Date;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.validator.constraints.UniqueElements;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class PreviousGuests {
@@ -39,6 +41,7 @@ public class PreviousGuests {
 	private String workPhone;
 	private String workAddressLine1;
 	private String workAddressLine2;
+	@UniqueElements
 	private String transactionId;
 	private String paymentPurpose;
 	private double amountToBePaid;

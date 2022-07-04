@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.validator.constraints.UniqueElements;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class PostPayments {
@@ -14,6 +16,7 @@ public class PostPayments {
 	//private double dueAmount;
 	private double amountPaid;
 	private int buildingId ;
+	@UniqueElements
 	private String transactionId;
 	 @JsonFormat(pattern="yyyy-MM-dd")
 	    private java.util.Date transactionDate = new java.util.Date(System.currentTimeMillis());
