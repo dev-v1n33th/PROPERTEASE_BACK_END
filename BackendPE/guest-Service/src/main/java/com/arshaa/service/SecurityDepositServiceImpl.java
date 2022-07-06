@@ -63,7 +63,7 @@ public class SecurityDepositServiceImpl implements SecurityDepositService {
 	public ResponseEntity<Defaults> addData(Defaults sdepo) {
 		
 		try {
-			if(securityDepositRepo.existsByOccupencyType(sdepo.getOccupencyType())==false)
+			if(securityDepositRepo.existsByOccupancyType(sdepo.getOccupencyType())==false)
 			{
 				Defaults securityadd = securityDepositRepo.save(sdepo);
 				return new ResponseEntity<>(securityadd,HttpStatus.OK);
@@ -81,9 +81,9 @@ public class SecurityDepositServiceImpl implements SecurityDepositService {
 	}
 
 	@Override
-	public ResponseEntity getSecurityDepositByOccupencyType(String occupencyType) {
+	public ResponseEntity getSecurityDepositByOccupancyType(String occupancyType) {
 		try {
-			Defaults otype = securityDepositRepo.findByOccupencyType(occupencyType);
+			Defaults otype = securityDepositRepo.findByOccupancyType(occupancyType);
 			return new ResponseEntity<>(otype,HttpStatus.OK);
 		}
 		catch(Exception e) {

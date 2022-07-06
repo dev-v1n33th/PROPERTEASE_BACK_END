@@ -16,7 +16,7 @@ public class Defaults {
 	private int id;
 	@Column
 	private double securityDepositAmount;
-	private String occupencyType;
+	private String occupancyType;
 	
 	
 	//@UniqueElements
@@ -34,10 +34,10 @@ public class Defaults {
 		this.securityDepositAmount = securityDepositAmount;
 	}
 	public String getOccupencyType() {
-		return occupencyType;
+		return occupancyType;
 	}
-	public void setOccupencyType(String occupencyType) {
-		this.occupencyType = occupencyType;
+	public void setOccupancyType(String occupancyType) {
+		this.occupancyType = occupancyType;
 	}
 	public int getNoticeDays() {
 		return noticeDays;
@@ -45,11 +45,11 @@ public class Defaults {
 	public void setNoticeDays(int noticeDays) {
 		this.noticeDays = noticeDays;
 	}
-	public Defaults(int id, double securityDepositAmount, String occupencyType, int noticeDays) {
+	public Defaults(int id, double securityDepositAmount, String occupancyType, int noticeDays) {
 		super();
 		this.id = id;
 		this.securityDepositAmount = securityDepositAmount;
-		this.occupencyType = occupencyType;
+		this.occupancyType = occupancyType;
 		this.noticeDays = noticeDays;
 	}
 	public Defaults() {

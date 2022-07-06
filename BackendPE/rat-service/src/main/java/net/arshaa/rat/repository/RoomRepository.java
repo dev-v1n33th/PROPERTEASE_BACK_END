@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import Models.RoomDto;
 import net.arshaa.rat.entity.Floors;
 import net.arshaa.rat.entity.Rooms;
 
@@ -21,6 +22,8 @@ public interface RoomRepository extends JpaRepository<Rooms, Integer>{
 	public List<Rooms> getRoomsByFloorId(int floorId);
 
 	Rooms getRoomNameByRoomId(int roomId) ;
+
+	
 
 
 }

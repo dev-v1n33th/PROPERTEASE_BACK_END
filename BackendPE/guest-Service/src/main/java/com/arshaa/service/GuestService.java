@@ -360,6 +360,10 @@ public class GuestService implements GuestInterface {
 			cal.setTime(m);
 			cal.add(Calendar.DATE, guest.getDuration());
 			m = cal.getTime();
+			//Newly Addel Logic 
+			cal.add(Calendar.DATE, -1);
+			m=cal.getTime();
+			
 			System.out.println(m);
 			g.setPlannedCheckOutDate(m);
 			g.setGuestStatus("active");
@@ -369,7 +373,10 @@ public class GuestService implements GuestInterface {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(m);
 			cal.add(Calendar.MONTH, guest.getDuration());
+			cal.add(Calendar.MONTH, 0);
 			m = cal.getTime();
+            cal.add(Calendar.DATE,-1);
+            m=cal.getTime();
 			System.out.println(m);
 
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");

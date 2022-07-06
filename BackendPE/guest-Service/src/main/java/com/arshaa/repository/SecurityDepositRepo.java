@@ -6,7 +6,7 @@ import com.arshaa.entity.Defaults;
 
 public interface SecurityDepositRepo extends  JpaRepository<Defaults, Integer> {
 
-	boolean existsByOccupencyType(String occupencyType);
-	Defaults findByOccupencyType(String occupencyType);
+	boolean existsByOccupancyType(String occupancyType);
+	Defaults findByOccupancyType(String occupancyType);
 
 }
