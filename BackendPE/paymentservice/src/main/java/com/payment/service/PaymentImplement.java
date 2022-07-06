@@ -222,6 +222,7 @@ public class PaymentImplement implements PaymentService {
 			long refundAmonutCount = repo.getCountOfRefundAmount(guestId);
 			PaymentRemainderData count = new PaymentRemainderData();
 			count.setTotalAmountPaid(amountPaidCount);
+			
 			count.setTotalRefundAmount(refundAmonutCount);
 
 			

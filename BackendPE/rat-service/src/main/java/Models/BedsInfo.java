@@ -22,9 +22,16 @@ public class BedsInfo {
 		private String guestName;
 	private Guest guest;
     private String guestStatus;
-    
+    private int sharing;
     
     private Object data;
+    
+	public int getSharing() {
+		return sharing;
+	}
+	public void setSharing(int sharing) {
+		this.sharing = sharing;
+	}
 	public boolean isBedStatus() {
 		return bedStatus;
 	}

@@ -8,6 +8,7 @@ import com.arshaa.entity.Guest;
 import com.arshaa.entity.GuestProfile;
 import com.arshaa.entity.Notes;
 import com.arshaa.entity.RatesConfig;
+import com.arshaa.entity.SecurityDeposit;
 import com.arshaa.entity.Defaults;
 import com.arshaa.model.DueGuestsList;
 import com.arshaa.model.GuestImageDisplay;
@@ -67,6 +68,9 @@ public class GuestController {
 	private SecurityDepositService securityDepositService;
 	@Autowired
 	private NotesService nServ;
+	
+	
+	
 	
 	// Guest Reports Sorted .
 	@GetMapping("/getAllGuests/{field}")
@@ -349,9 +353,9 @@ public class GuestController {
 	}
 
 	// Get Security Deposit By Occupency Type API
-	@GetMapping("/getSecurityDepositByOccupencyType/{occupencyType}")
-	public ResponseEntity getSecurityDepositByOccupencyType(@PathVariable String occupencyType) {
-		return securityDepositService.getSecurityDepositByOccupencyType(occupencyType);
+	@GetMapping("/getSecurityDepositByOccupancyType/{occupancyType}")
+	public ResponseEntity getSecurityDepositByOccupancyType(@PathVariable String occupancyType) {
+		return securityDepositService.getSecurityDepositByOccupancyType(occupancyType);
 
 	}
 

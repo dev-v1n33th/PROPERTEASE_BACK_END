@@ -1,18 +1,11 @@
 package net.arshaa.rat.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.StoredProcedureQuery;
-import javax.transaction.Transactional;
-
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -20,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import Models.AvailableBeds;
-import Models.BedSummary;
+
 import Models.BedsCount;
 import Models.BedsInfo;
 import Models.BuildingId;
@@ -30,11 +23,11 @@ import Models.BuildingSummary;
 import Models.FloorNameAndId;
 import Models.FloorsInfo;
 import Models.NewBuildModel;
+import Models.RoomDto;
 import Models.RoomsInfo;
 import Models.UpdateBedDto;
 import common.Guest;
 import common.GuestProfile;
-import common.Response;
 import common.User;
 import net.arshaa.rat.entity.Bed;
 import net.arshaa.rat.entity.Buildings;
@@ -47,6 +40,7 @@ import net.arshaa.rat.repository.FloorRepository;
 import net.arshaa.rat.repository.BuildingRepository;
 import net.arshaa.rat.repository.RoomRepository;
 import net.arshaa.rat.repository.UsersMasterRepo;
+import net.arshaa.rat.service.ratService;
 
 import org.springframework.web.client.RestTemplate;
 
@@ -67,6 +61,9 @@ public class BedController {
 
 	@Autowired
 	private RoomRepository roomRepo;
+	
+	@Autowired
+	private ratService rservice ;
 	
 	
 	
@@ -89,12 +86,24 @@ public class BedController {
 
 	
 //Api for test
+	 
+	 @DeleteMapping("/deleteBedsAndUpdatesharing/{id}")
+	 public ResponseEntity<String> deleteBedsById(@RequestBody RoomDto kamra,@PathVariable  int id) {
+		  rservice.deleteBedsById(kamra, id);
+		  return new ResponseEntity<String>( "BedDeleted" , HttpStatus.OK) ;
+	 }
+	 
+	 @PutMapping("/updateRoomShare/{id}")
+	 public Rooms updateSharing(@RequestBody RoomDto roomDto ,@PathVariable int id) {
+		  return  this.rservice.updateRoomsSharing(roomDto, id); 
+	 }
 
 	@GetMapping(path = "/test")
 	public ResponseEntity<String> test() {
 		return new ResponseEntity<>("hello", HttpStatus.OK);
 	}
 // POST API TO ADD MASTER DATA
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@PostMapping(path = "/addBuilding")
 	public ResponseEntity<UsersMaster> addBuilding(@RequestBody UsersMaster newMaster) {
 		try {
@@ -105,6 +114,7 @@ public class BedController {
 				return new ResponseEntity("Email already exist", HttpStatus.OK);
 			}
 			else {
+				@SuppressWarnings("unused")
 				UsersMaster usersMaster = uMaster.save(newMaster);
 			    //CommonBuildings buildings=new CommonBuildings();
 			    Buildings builds = new Buildings();
@@ -148,6 +158,7 @@ public class BedController {
 
 	}
 	// GET API TO GET ALL MASTER DATA
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GetMapping("/getAllMasterData")
 	public ResponseEntity<List<UsersMaster>> getAllData() {
 	    try {
@@ -238,6 +249,7 @@ Rooms room = roomRepo.save(newRoom);
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GetMapping("/getAllFloors")
 	public ResponseEntity<List<Floors>> getAllFloors() {
 		try {
@@ -248,6 +260,7 @@ Rooms room = roomRepo.save(newRoom);
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GetMapping("/getAllRooms")
 	public ResponseEntity<List<Rooms>> getAllRooms() {
 		try {
@@ -261,6 +274,7 @@ Rooms room = roomRepo.save(newRoom);
 	
 // Post API to add Bed by id
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@PostMapping(path = "/addBed")
 	public ResponseEntity<Bed> addBed(@RequestBody Bed newBed) {
 		Bed bed1=new Bed();
@@ -394,6 +408,7 @@ Rooms room = roomRepo.save(newRoom);
 		try {
 			buildingRepo.deleteById(id);
 			return new ResponseEntity<String>("Deleted Successfully", HttpStatus.OK);
+			
 		} catch (Exception e) {
 			return new ResponseEntity<String>("Something went wrong", HttpStatus.OK);
 
@@ -560,6 +575,7 @@ Rooms room = roomRepo.save(newRoom);
 												newBed.setAc(bed.isAc());
 												newBed.setBedName(bed.getBedName());
 												newBed.setBedNum(bed.getId());
+												newBed.setSharing(bed.getSharing());
 												newBed.setBuildingName(getBuilding.get().getBuildingName());
 //												if(bed.isBedStatus()==false)
 //												{
@@ -669,8 +685,8 @@ Rooms room = roomRepo.save(newRoom);
 
 	// GET MAPPING API FOR AVAILABLE BEDS BY BUILDING ID
 
-	@GetMapping(path = "/getAvailableBedsByBuildingId/{id}/{sharing}")
-	public ResponseEntity<java.util.List<BedsInfo>> buildingId(@PathVariable Integer id, @PathVariable int sharing) {
+	@GetMapping(path = "/getAvailableBedsByBuildingId/{id}")
+	public ResponseEntity<java.util.List<BedsInfo>> buildingId(@PathVariable Integer id) {
 		List<BedsInfo> bedsList = new ArrayList<>();
 		Optional<Buildings> getBuilding = buildingRepo.findById(id);
 		if (getBuilding.isPresent()) {
@@ -681,8 +697,8 @@ Rooms room = roomRepo.save(newRoom);
 					Optional<List<Rooms>> getRooms = roomRepo.findByFloorId(floor.getFloorId());
 					if (getRooms.isPresent()) {
 						getRooms.get().forEach(room -> {
-//							Optional<List<Bed>> getBeds = bedrepo.findByroomIdAndBedStatus(room.getRoomId(), true);
-							Optional<List<Bed>> getBeds = bedrepo.findByRoomIdAndBedStatusAndSharing(room.getRoomId(), true,sharing);
+						Optional<List<Bed>> getBeds = bedrepo.findByroomIdAndBedStatus(room.getRoomId(), true);
+						//	Optional<List<Bed>> getBeds = bedrepo.findByRoomIdAndBedStatusAndSharing(room.getRoomId(), true,sharing);
 							if (getBeds.isPresent()) {
 								getBeds.get().forEach(bed -> {
 									BedsInfo newBed = new BedsInfo();
@@ -755,8 +771,8 @@ Rooms room = roomRepo.save(newRoom);
 
 //    getApi for all buldings available beds
 
-	@GetMapping(path = "/getAvailableBedsByBuildings/{sharing}")
-	public ResponseEntity<List<BuildingModel>> getAvailableBedsByBuildings(@PathVariable int sharing) {
+	@GetMapping(path = "/getAvailableBedsByBuildings")
+	public ResponseEntity<List<BuildingModel>> getAvailableBedsByBuildings() {
 		List<BuildingModel> info = new ArrayList<>();
 		List<Buildings> getBuildings = buildingRepo.findAll();
 		if (!getBuildings.isEmpty()) {
@@ -767,9 +783,9 @@ Rooms room = roomRepo.save(newRoom);
 					newBuild.setBuildingId(getBuilding.get().getBuildingId());
 					newBuild.setBuildingName(getBuilding.get().getBuildingName());
 					List<BedsInfo> bedsList = new ArrayList<>();
-//					Optional<List<Bed>> getBeds = bedrepo
-//							.findBybuildingIdAndBedStatus(getBuilding.get().getBuildingId(), true);
-					Optional<List<Bed>> getBeds =bedrepo.findByRoomIdAndBedStatusAndSharing(getBuilding.get().getBuildingId(), true,sharing);
+					Optional<List<Bed>> getBeds = bedrepo
+						.findBybuildingIdAndBedStatus(getBuilding.get().getBuildingId(), true);
+			//		Optional<List<Bed>> getBeds =bedrepo.findByRoomIdAndBedStatusAndSharing(getBuilding.get().getBuildingId(), true,sharing);
 					if (getBeds.isPresent()) {
 						getBeds.get().forEach(bed -> {
 							BedsInfo newBed = new BedsInfo();
@@ -910,6 +926,7 @@ Rooms room = roomRepo.save(newRoom);
 
 	
 	// Get api to get buildingid and buildingname
+	
 	@GetMapping(path="/getBuildingIdAndName")
 	public ResponseEntity<List<BuildingId>> getBuildingIdAndName() {
 		try {
@@ -961,6 +978,7 @@ Rooms room = roomRepo.save(newRoom);
 	}
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GetMapping(path = "/getRoomIdAndNameByFloorId/{floorId}")
 	public ResponseEntity<List<Floors>> getRoomIdAndNameByFloorId(@PathVariable int floorId) {
 	{
@@ -981,6 +999,7 @@ Rooms room = roomRepo.save(newRoom);
 	}
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GetMapping(path = "/getBedsByRoomId/{roomId}")
 	public ResponseEntity<List<Floors>> getBedsByRoomId(@PathVariable int roomId) {
 	{
@@ -1055,7 +1074,14 @@ Rooms room = roomRepo.save(newRoom);
 		return null;		
 
 		   	}
-
-
+	
+	@GetMapping("/getSharingCount/{roomId}")
+  int calculatingSharing(@PathVariable  int roomId){
+        // repo.findNumberOfRemainingLeavesByEmployeeId(employeeId);
+        int b = bedrepo.countSharing(roomId);
+        return b;
+    
+	}
+	
 
 }
